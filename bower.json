@@ -1,0 +1,26 @@
+{
+  "name": "ts-utils",
+  "version": "0.0.1",
+  "homepage": "https://github.com/townsquared/utils",
+  "authors": [
+    "Townsquared Dev"
+  ],
+  "description": "Townsquared Frontend Utils",
+  "main": "utils.js",
+  "keywords": [
+    "angular",
+    "angularjs",
+    "townsquared",
+    "utils",
+    "utilities",
+    "directives"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
