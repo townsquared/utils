@@ -5,6 +5,8 @@ var app = angular.module('ts.utils', []);
  *
  * @example
  *   <input focus-on="someEventName">
+ *   or
+ *   <input focus-on="focus-row-{{$index}}">
  *   ...
  *   $scope.$broadcast('someEventName')
  *
@@ -12,8 +14,14 @@ var app = angular.module('ts.utils', []);
 app.directive('focusOn', function(){
   return {
     link: function($scope, $element, $attrs) {
-      $scope.$on($attrs.focusOn, function(){
-        $element[0].focus();
+      var listener = angular.noop;
+      $attrs.$observe('focusOn', function(newVal){
+        // Stop listening to old event name
+        listener();
+        // Listen to new event name
+        listener = $scope.$on(newVal, function(){
+          $element[0].focus();
+        });
       });
     }
   };
