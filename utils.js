@@ -26,3 +26,24 @@ app.directive('focusOn', function(){
     }
   };
 });
+
+/**
+ * autoGrow - Increases height of textarea while typing
+ *
+ * @note use with min-height and box-sizing:border-box
+ *
+ * @example
+ * 	<textarea auto-grow></textarea>
+ */
+app.directive('autoGrow', function($timeout) {
+  return {
+    restrict: 'A',
+    link: function($scope, $element, $attrs) {
+      function grow() {
+        $element[0].style.height = $element[0].scrollHeight + 'px';
+      }
+      $element.on('keyup', grow);
+      $timeout(grow, true);
+    }
+  }
+});
