@@ -1,12 +1,12 @@
 {
   "name": "angular-ts-utils",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "homepage": "https://github.com/townsquared/utils",
   "authors": [
     "Townsquared Dev"
   ],
   "description": "Townsquared Frontend Utils",
-  "main": "utils.js",
+  "main": "dist/utils.min.js",
   "keywords": [
     "angular",
     "angularjs",
