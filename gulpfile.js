@@ -11,3 +11,7 @@ gulp.task('default', function(){
     .pipe(plugins.concat('utils.min.js'))
     .pipe(gulp.dest('dist'))
 });
+
+gulp.task('watch', ['default'], function(){
+  gulp.watch('src/**/*.js', ['default']);
+});
