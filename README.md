@@ -13,7 +13,7 @@ A package of open-sourceable angularjs utils
 
 Focuses an input on scope broadcasted event.
 
-Specify the name of the broadcast event you would like to use to trigger the event
+Specify the name of the broadcast event you would like to use to trigger the focusing.
 
 
 ```html
@@ -27,3 +27,20 @@ $scope.$broadcast('someEventName');
 or
 $scope.$broadcast('focus-row-'+$index);
 ```
+
+### scrollOn
+
+Scroll to a certain point inside an overflowing DOM element on scope broadcasted event.
+
+Specify the name of the broadcast event you would like to use to trigger scrolling.  
+Pass the location to scroll to as the data of the event.  
+**Location:** 'top' | 'bottom' | 200
+
+ ```html
+ <ul scroll-on="someEventName" style="overflow: auto">...</ul>
+ ```
+
+```js
+ var location = 'bottom';
+ $scope.$broadcast('someEventName', location);
+ ```
