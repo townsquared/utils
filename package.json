@@ -1,6 +1,6 @@
 {
   "name": "angular-ts-utils",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Angular Utilities for Townsqd.com",
   "main": "utils.min.js",
   "scripts": {
@@ -26,9 +26,13 @@
   "devDependencies": {
     "gulp": "^3.8.11",
     "gulp-angular-filesort": "^1.1.1",
-    "gulp-concat": "^2.5.2",
+    "gulp-babel": "^5.2.0",
+    "gulp-concat": "^2.6.0",
     "gulp-load-plugins": "^0.10.0",
     "gulp-ng-annotate": "^0.5.3",
+    "gulp-plumber": "^1.0.1",
+    "gulp-sourcemaps": "^1.5.2",
     "gulp-uglify": "^1.2.0"
-  }
+  },
+  "dependencies": {}
 }
