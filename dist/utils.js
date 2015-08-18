@@ -44,17 +44,16 @@ angular.module('ts.utils').directive('uiEvent', function ($parse) {
  * 	</p>
  *
  * @param {string} value  The string to be truncated
- * @param {int} [wordLimit] The number of words to truncate at. Default: 50
+ * @param {int} [wordLimit] The number of words to truncate at. If falsey, doesn't truncate.
  * @param {string} [ellipses] The string to use as an ellipses. Default: '…' (&hellip;)
  */
 'use strict';
 
-angular.module('ts.utils').filter('ts-truncate', function () {
-  return function (value) {
-    var wordLimit = arguments.length <= 1 || arguments[1] === undefined ? 50 : arguments[1];
+angular.module('ts.utils').filter('tsTruncate', function () {
+  return function (value, wordLimit) {
     var ellipses = arguments.length <= 2 || arguments[2] === undefined ? '…' : arguments[2];
 
-    if (!value) return value;
+    if (!value || !angular.isNumber(wordLimit)) return value;
 
     var words = value.split(' ');
 

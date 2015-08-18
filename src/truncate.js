@@ -8,12 +8,12 @@
  * 	</p>
  *
  * @param {string} value  The string to be truncated
- * @param {int} [wordLimit] The number of words to truncate at. Default: 50
+ * @param {int} [wordLimit] The number of words to truncate at. If falsey, doesn't truncate.
  * @param {string} [ellipses] The string to use as an ellipses. Default: '…' (&hellip;)
  */
- angular.module('ts.utils').filter('ts-truncate', function() {
-  return function(value, wordLimit = 50, ellipses = '…'){
-    if (!value)
+ angular.module('ts.utils').filter('tsTruncate', function() {
+  return function(value, wordLimit, ellipses = '…'){
+    if (!value || !angular.isNumber(wordLimit))
       return value;
 
     var words = value.split(' ');
