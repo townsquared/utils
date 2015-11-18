@@ -5,8 +5,12 @@
  *   <input focus-on="someEventName">
  *   or
  *   <input focus-on="focus-row-{{$index}}">
+ *   or
+ *   <p focus-on="anotherEvent"></p>
  *   ...
- *   $scope.$broadcast('someEventName')
+ *   $scope.$broadcast('someEventName');
+ *   $scope.$broadcast('focus-row-2');
+ *   $scope.$broadcast('anotherEvent');
  *
  */
  angular.module('ts.utils').directive('focusOn', function(){
@@ -18,6 +22,7 @@
         listener();
         // Listen to new event name
         listener = $scope.$on(newVal, function(){
+          $element[0].scrollIntoView();
           $element[0].focus();
         });
       });
