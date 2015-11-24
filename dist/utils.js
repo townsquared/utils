@@ -117,7 +117,7 @@ angular.module('ts.utils').directive('scrollOn', function ($timeout) {
  */
 'use strict';
 
-angular.module('ts.utils').directive('focusOn', function () {
+angular.module('ts.utils').directive('focusOn', function ($window) {
   return {
     link: function link($scope, $element, $attrs) {
       var listener = angular.noop;
@@ -126,8 +126,17 @@ angular.module('ts.utils').directive('focusOn', function () {
         listener();
         // Listen to new event name
         listener = $scope.$on(newVal, function () {
-          $element[0].scrollIntoView();
-          $element[0].focus();
+          var speed = arguments.length <= 0 || arguments[0] === undefined ? 1000 : arguments[0];
+
+          // Center element on screen
+          var offset = $element.offset().top - $window.innerHeight / 2 - $element.height() / 2;
+          $('body').animate({ scrollTop: offset }, {
+            speed: speed,
+            complete: function complete() {
+              // Focus element (if input)
+              $element[0].focus();
+            }
+          });
         });
       });
     }
