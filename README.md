@@ -9,12 +9,21 @@ A package of open-sourceable angularjs utils
 
 ## Utils
 
+### autoGrow
+
+Increases height of textarea while typing
+
+**Note:** use with `min-height`, `max-height` and `box-sizing: border-box`
+
+```html
+<textarea auto-grow></textarea>
+```
+
 ### focusOn
 
 Focuses an input on scope broadcasted event.
 
 Specify the name of the broadcast event you would like to use to trigger the focusing.
-
 
 ```html
 <input focus-on="someEventName">
@@ -44,3 +53,27 @@ Pass the location to scroll to as the data of the event.
  var location = 'bottom';
  $scope.$broadcast('someEventName', location);
  ```
+
+### truncate
+
+Truncates a string by a specified number of words
+
+```html
+<p>
+  {{::post.body | truncate : 35}}
+  <a ng-if="::post.body.split(' ').length>35">Read More</a>
+</p>
+```
+
+### uiEvent
+
+**TODO:** Remove in liue of ui-utils
+
+General-purpose Event binding. Bind any event not natively supported by Angular
+Pass an object with keynames for events and their callback expressions
+Allows $event object and $params object to be passed to expressions
+
+```html
+<input ui-event="{ focus : 'counter++', blur : 'someCallback()' }">
+<input ui-event="{ myCustomEvent : 'myEventHandler($event, $params)'}">
+```
