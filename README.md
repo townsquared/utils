@@ -60,7 +60,7 @@ Truncates a string by a specified number of words
 
 ```html
 <p>
-  {{::post.body | truncate : 35}}
+  {{::post.body | tsTruncate : 35}}
   <a ng-if="::post.body.split(' ').length>35">Read More</a>
 </p>
 ```
