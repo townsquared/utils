@@ -103,6 +103,8 @@ angular.module('ts.utils').directive('scrollOn', function ($timeout) {
 /**
  * focusOn - Focuses an input on scope event
  *
+ * @note depends on jQuery
+ *
  * @example
  *   <input focus-on="someEventName">
  *   or
@@ -129,14 +131,25 @@ angular.module('ts.utils').directive('focusOn', function ($window) {
           var speed = arguments.length <= 0 || arguments[0] === undefined ? 1000 : arguments[0];
 
           // Center element on screen
-          var offset = $element.offset().top - $window.innerHeight / 2 - $element.height() / 2;
-          $('body').animate({ scrollTop: offset }, {
-            speed: speed,
-            complete: function complete() {
-              // Focus element (if input)
-              $element[0].focus();
-            }
-          });
+          if ($element.parents('.reveal-modal').length) {
+            var targetWindow = $element.parents('.reveal-modal .content');
+            targetWindow.animate({ scrollTop: $element.offset().top - targetWindow.offset().top + targetWindow.scrollTop() }, {
+              speed: speed,
+              complete: function complete() {
+                // Focus element (if input)
+                $element[0].focus();
+              }
+            });
+          } else {
+            var offset = $element.offset().top;
+            $('body').animate({ scrollTop: offset }, {
+              speed: speed,
+              complete: function complete() {
+                // Focus element (if input)
+                $element[0].focus();
+              }
+            });
+          }
         });
       });
     }
