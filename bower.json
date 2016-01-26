@@ -1,6 +1,6 @@
 {
   "name": "angular-ts-utils",
-  "version": "0.0.13",
+  "version": "0.1",
   "homepage": "https://github.com/townsquared/utils",
   "authors": [
     "Townsquared Dev"
@@ -11,7 +11,7 @@
     "angular",
     "angularjs",
     "townsquared",
-    "utils",
+    "uti1
     "utilities",
     "directives"
   ],
