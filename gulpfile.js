@@ -1,8 +1,11 @@
 var gulp = require('gulp'),
-  plugins = require('gulp-load-plugins')();
+  plugins = require('gulp-load-plugins')(),
+  ngHtml2Js = require("gulp-ng-html2js");
+
 
 var paths = {
   src: ['src/**/*.js'],
+  html: ['src/templates/*.html'],
   file: 'utils.js',
   fileMin: 'utils.min.js',
   dest: './dist',
@@ -33,4 +36,17 @@ function scripts(paths) {
       .pipe(gulp.dest(paths.dest));
 
   };
+}
+
+gulp.task('html2js', templates(paths))
+function templates(paths){
+  return function(){
+    return gulp.src(paths.html)
+      .pipe(ngHtml2Js({
+        moduleName: "ts.utils",
+        prefix: "templates/"
+      }))
+      .pipe(plugins.concat('ts-utils-templates.js'))
+      .pipe(gulp.dest("./dist"))
+  }
 }

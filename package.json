@@ -32,7 +32,9 @@
     "gulp-ng-annotate": "^0.5.3",
     "gulp-plumber": "^1.0.1",
     "gulp-sourcemaps": "^1.5.2",
-    "gulp-uglify": "^1.2.0"
+    "gulp-uglify": "^1.2.0",
+    "gulp-ng-html2js": "^0.2.2"
   },
-  "dependencies": {}
+  "dependencies": {
+  }
 }

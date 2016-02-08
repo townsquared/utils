@@ -66,6 +66,107 @@ angular.module('ts.utils').filter('tsTruncate', function () {
     return value;
   };
 });
+/**
+ * ts-tooltip - Shows a tooltip with an arrow pointing to the element the directive is applied to.
+ *
+ * @note depends on jQuery
+ *
+ * @example
+ *   <input ts-tooltip="Some message here will be compiled and linked against elements scope" />
+ *
+ */
+
+'use strict';
+
+angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $compile) {
+
+  return {
+    restrict: 'A',
+    scope: {
+      tsTooltip: '@',
+      tsTooltipDirection: '@',
+      tsTooltipEvent: '@',
+      tsTooltipShow: '='
+    },
+    link: function link($scope, $element, $attrs) {
+      var template = $templateCache.get('templates/tsTooltip.html');
+      var direction = $scope.tsTooltipDirection || 'right';
+      var eventType = $scope.tsTooltipEvent || 'mouseenter';
+      var isVisible = false;
+
+      var newTooltip = $compile(template)($scope);
+      newTooltip[0].style.visibility = 'hidden';
+
+      var tooltipMain = newTooltip.find("#tooltipMain");
+      tooltipMain.addClass(direction);
+
+      $element.after(newTooltip);
+
+      function makeVisible() {
+        if (!isVisible) {
+
+          isVisible = true;
+
+          newTooltip[0].style.visibility = 'visible';
+
+          switch (direction) {
+            case 'right':
+              newTooltip[0].style.left = '10px';
+              newTooltip[0].style.top = -newTooltip.children()[0].offsetHeight / 2 + 'px';
+              break;
+            case 'left':
+              newTooltip[0].style.left = -$element[0].offsetWidth - newTooltip.children()[0].offsetWidth - 10 + 'px';
+              newTooltip[0].style.top = -newTooltip.children()[0].offsetHeight / 2 + 'px';
+              break;
+            case 'top':
+              newTooltip[0].style.left = -$element[0].offsetWidth / 2 - newTooltip.children()[0].offsetWidth / 2 + 'px';
+              newTooltip[0].style.top = -$element[0].offsetHeight / 2 - newTooltip.children()[0].offsetHeight - 10 + 'px';
+              break;
+            case 'bottom':
+              newTooltip[0].style.left = -$element[0].offsetWidth / 2 - newTooltip.children()[0].offsetWidth / 2 + 'px';
+              newTooltip[0].style.top = $element[0].offsetHeight / 2 + 'px';
+              break;
+          }
+        }
+      }
+
+      function makeInvisible() {
+        if (isVisible) {
+          isVisible = false;
+          newTooltip[0].style.visibility = 'hidden';
+        }
+      }
+
+      function toggleVisibility() {
+        if (isVisible) {
+          makeInvisible();
+        } else {
+          makeVisible();
+        }
+      }
+
+      if ($attrs.tsTooltipShow === undefined) {
+        switch (eventType) {
+          case 'mouseenter':
+            $element.on('mouseenter', makeVisible);
+            $element.on('mouseleave', makeInvisible);
+            break;
+          case 'click':
+            $element.on('click', toggleVisibility);
+            break;
+        }
+      } else {
+        $scope.$watch('tsTooltipShow', function (newVal, oldVal) {
+          if (newVal) {
+            makeVisible();
+          } else {
+            makeInvisible();
+          }
+        });
+      }
+    }
+  };
+});
 
 /**
  * scrollOn - $broadcast()/$emit() a $scope event with the location to trigger scrolling
@@ -140,9 +241,8 @@ angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig
         // Stop listening to old event name
         listener();
         // Listen to new event name
-        listener = $scope.$on(newVal, function () {
-          var speed = arguments.length <= 0 || arguments[0] === undefined ? 1000 : arguments[0];
-
+        listener = $scope.$on(newVal, function (speed) {
+          speed = speed || 1000;
           // Center element on screen
           if ($element.parents('.reveal-modal').length) {
             var targetWindow = $element.parents('.reveal-modal .content');
@@ -169,7 +269,7 @@ angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig
             // Check if provider or attribute set autoCenter/auto-center to true if so use offset/2 ignores the extra
             // offset in this case
             if (focusOnConfig.autoCenter && $attrs.focusOnAutoCenter === undefined || $attrs.focusOnAutoCenter && $attrs.focusOnAutoCenter == 'true') {
-              offset = offset - window.document.body.clientHeight / 2 + $element[0].clientHeight / 2;
+              offset = offset - window.innerHeight / 2 - $element[0].clientHeight / 2;
             } else {
               offset = offset - extraOffset;
             }
