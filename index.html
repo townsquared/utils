@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html ng-app="testApp">
+
+  <head>
+    <meta charset="utf-8" />
+    <title>AngularJS Plunker</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script src="https://code.angularjs.org/1.5.0-rc.0/angular.js"></script>
+    <script src="bower_components/angular-ts-utils/src/utils.js"></script>
+    <script src="bower_components/angular-ts-utils/src/focusOn.js"></script>
+    <script src="bower_components/angular-ts-utils/src/tooltip.js"></script>
+    <script src="bower_components/angular-ts-utils/dist/ts-utils-templates.js"></script>
+    <script src="app.js"></script>
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-ts-utils/src/styles/ts-tooltip.css">
+  </head>
+
+  <body ng-controller="MainCtrl as mainCtrl">
+    <p>Hello {{mainCtrl.foo.bar}}!</p>
+    <input type="checkbox" ng-model="mainCtrl.foo.someBool"/>
+    This is some stuff before the button
+    <button
+        ts-tooltip-event="click"
+        ts-tooltip="Something that shows up in there what is the width of this thing dictated by"
+        ts-tooltip-direction="bottom">
+      Bottom Click Me
+    </button>
+    <button
+        ts-tooltip-show="mainCtrl.foo.someBool"
+        ng-click="mainCtrl.jumpDown()"
+        ts-tooltip="Something that shows up in there what is the width of this thing dictated by"
+        ts-tooltip-direction="top">
+      Top
+    </button>
+    <button
+        ng-click="mainCtrl.jumpDown()"
+        ts-tooltip="Something that shows up in there what is the width of this thing dictated by"
+        ts-tooltip-direction="left">
+      Left
+    </button>
+    <button
+        ng-click="mainCtrl.jumpDown()"
+        ts-tooltip="Something that shows up in there what is the width of this thing dictated by"
+        ts-tooltip-direction="right">
+      Right
+    </button>
+    Test with something after it
+
+    <div ng-repeat="thing in mainCtrl.things">
+      {{thing}} This is some stuff with which I can test
+    </div>
+
+    <div focus-on='someElementFocus' focus-on-auto-center='true'>A place to jump to</div>
+    
+    <div ng-repeat="thing in mainCtrl.things">
+      {{thing}} This is some stuff
+    </div>
+  </body>
+
+</html>

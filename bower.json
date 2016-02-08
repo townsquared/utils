@@ -1,0 +1,22 @@
+{
+  "name": "utils-gh-pages",
+  "homepage": "https://github.com/townsquared/utils",
+  "authors": [
+    "Shaun Husain <shaun@intellectual-tech.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-ts-utils": "https://github.com/townsquared/utils.git#0.1.2"
+  }
+}
