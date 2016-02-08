@@ -22,6 +22,7 @@ angular.module('ts.utils')
         tsTooltipShow:'='
       },
       link: function($scope, $element, $attrs) {
+        var ARROW_SIZE = 10;
         var template = $templateCache.get('templates/tsTooltip.html');
         var direction = $scope.tsTooltipDirection || 'right';
         var eventType = $scope.tsTooltipEvent || 'mouseenter';
@@ -32,6 +33,8 @@ angular.module('ts.utils')
 
         var tooltipMain = newTooltip.find("#tooltipMain");
         tooltipMain.addClass(direction);
+
+        console.log(tooltipMain);
 
         $element.after(newTooltip);
 
@@ -45,19 +48,19 @@ angular.module('ts.utils')
 
             switch(direction) {
               case 'right':
-                newTooltip[0].style.left='10px';
-                newTooltip[0].style.top=-newTooltip.children()[0].offsetHeight/2+'px';
+                newTooltip[0].style.left=ARROW_SIZE+'px';
+                newTooltip[0].style.top=-tooltipMain[0].offsetHeight/2+'px';
                 break;
               case 'left':
-                newTooltip[0].style.left=-$element[0].offsetWidth-newTooltip.children()[0].offsetWidth-10+'px';
-                newTooltip[0].style.top=-newTooltip.children()[0].offsetHeight/2+'px';
+                newTooltip[0].style.left=-$element[0].offsetWidth-tooltipMain[0].offsetWidth-ARROW_SIZE+'px';
+                newTooltip[0].style.top=-tooltipMain[0].offsetHeight/2+'px';
                 break;
               case 'top':
-                newTooltip[0].style.left=-$element[0].offsetWidth/2-newTooltip.children()[0].offsetWidth/2+'px';
-                newTooltip[0].style.top=-$element[0].offsetHeight/2-newTooltip.children()[0].offsetHeight-10+'px';
+                newTooltip[0].style.left=-$element[0].offsetWidth/2-tooltipMain[0].offsetWidth/2+'px';
+                newTooltip[0].style.top=-$element[0].offsetHeight/2-tooltipMain[0].offsetHeight-ARROW_SIZE+'px';
                 break;
               case 'bottom':
-                newTooltip[0].style.left=-$element[0].offsetWidth/2-newTooltip.children()[0].offsetWidth/2+'px';
+                newTooltip[0].style.left=-$element[0].offsetWidth/2-tooltipMain[0].offsetWidth/2+'px';
                 newTooltip[0].style.top=$element[0].offsetHeight/2 + 'px';
                 break;
             }
