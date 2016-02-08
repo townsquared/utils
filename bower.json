@@ -17,6 +17,6 @@
     "tests"
   ],
   "dependencies": {
-    "angular-ts-utils": "https://github.com/townsquared/utils.git#0.1.2"
+    "angular-ts-utils": "https://github.com/townsquared/utils.git#adds-tooltip-directive"
   }
 }

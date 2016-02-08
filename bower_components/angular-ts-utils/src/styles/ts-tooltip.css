@@ -1,0 +1,121 @@
+
+.ts-tooltip-container{
+    position:relative;
+    display:inline-block;
+}
+.arrow-box-container{
+    position:absolute;
+}
+.ts-tooltip-main {
+    position: relative;
+    background: rgba(255,255,255, 1);
+    border: 1px solid rgba(204, 204, 204, 1);
+    box-shadow: 0 1px 3px rgba(200,200,200,0.7);
+    padding:20px;
+    min-width:150px;
+}
+
+/* Left */
+.ts-tooltip-main.right:after, .ts-tooltip-main.right:before {
+    right: 100%;
+    top: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.ts-tooltip-main.right:after {
+    border-color: rgba(255,255,255, 0);
+    border-right-color: rgba(255,255,255, 1);
+    border-width: 10px;
+    margin-top: -10px;
+}
+
+.ts-tooltip-main.right:before {
+    border-color: rgba(204, 204, 204, 0);
+    border-right-color: rgba(204, 204, 204, 1);
+    border-width: 11px;
+    margin-top: -11px;
+}
+
+/* Right */
+.ts-tooltip-main.left:after, .ts-tooltip-main.left:before {
+    left: 100%;
+    top: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.ts-tooltip-main.left:after {
+    border-color: rgba(255,255,255, 0);
+    border-left-color: rgba(255,255,255, 1);
+    border-width: 10px;
+    margin-top: -10px;
+}
+
+.ts-tooltip-main.left:before {
+    border-color: rgba(204, 204, 204, 0);
+    border-left-color: rgba(204, 204, 204, 1);
+    border-width: 11px;
+    margin-top: -11px;
+}
+
+/* Bottom */
+
+.ts-tooltip-main.bottom:after, .ts-tooltip-main.bottom:before {
+    bottom: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.ts-tooltip-main.bottom:after {
+    border-color: rgba(255,255,255, 0);
+    border-bottom-color: rgba(255,255,255, 1);
+    border-width: 10px;
+    margin-left: -10px;
+}
+
+.ts-tooltip-main.bottom:before {
+    border-color: rgba(204, 204, 204, 0);
+    border-bottom-color: rgba(204, 204, 204, 1);
+    border-width: 11px;
+    margin-left: -11px;
+}
+/* Top */
+
+.ts-tooltip-main.top:after, .ts-tooltip-main.top:before {
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.ts-tooltip-main.top:after {
+    border-color: rgba(255,255,255, 0);
+    border-top-color: rgba(255,255,255, 1);
+    border-width: 10px;
+    margin-left: -10px;
+}
+
+.ts-tooltip-main.top:before {
+    border-color: rgba(204, 204, 204, 0);
+    border-top-color: rgba(204, 204, 204, 1);
+    border-width: 11px;
+    margin-left: -11px;
+}

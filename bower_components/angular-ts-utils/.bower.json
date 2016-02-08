@@ -1,0 +1,35 @@
+{
+  "name": "angular-ts-utils",
+  "homepage": "https://github.com/townsquared/utils",
+  "authors": [
+    "Townsquared Dev"
+  ],
+  "description": "Townsquared Frontend Utils",
+  "main": "dist/utils.min.js",
+  "keywords": [
+    "angular",
+    "angularjs",
+    "townsquared",
+    "utils",
+    "utilities",
+    "directives"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "fc6251eba0",
+  "_resolution": {
+    "type": "branch",
+    "branch": "adds-tooltip-directive",
+    "commit": "fc6251eba092c287ffb1a2be133c92fbc3accf77"
+  },
+  "_source": "https://github.com/townsquared/utils.git",
+  "_target": "adds-tooltip-directive",
+  "_originalSource": "https://github.com/townsquared/utils.git",
+  "_direct": true
+}
