@@ -28,80 +28,92 @@
  *   offset and autoCenter are focus-on-offset and focus-on-auto-center respectively.
  *
  */
- angular.module('ts.utils').directive('focusOn', function($window, focusOnConfig){
-  return {
-    link: function($scope, $element, $attrs) {
-      var listener = angular.noop;
-      $attrs.$observe('focusOn', function(newVal){
-        // Stop listening to old event name
-        listener();
-        // Listen to new event name
-        listener = $scope.$on(newVal, function(speed = 1000){
-          // Center element on screen
-          if($element.parents('.reveal-modal').length) {
-            var targetWindow = $element.parents('.reveal-modal .content');
-            targetWindow.animate({
-              scrollTop: $element.offset().top - targetWindow.offset().top + targetWindow.scrollTop()
-            }, {
-              speed: speed,
-              complete: function complete() {
-                // Focus element (if input)
-                $element[0].focus();
-              }
-            });
-          }
-          else {
-            var offset = $element.offset().top;
-
-            // Use provider configured offset
-            var extraOffset = focusOnConfig.offset;
-
-            // If attribute is set override provider configured offset
-            if($attrs.focusOnOffset !== undefined){
-              extraOffset = parseInt($attrs.focusOnOffset);
-            }
-
-            // Check if provider or attribute set autoCenter/auto-center to true if so use offset/2 ignores the extra
-            // offset in this case
-            if( (focusOnConfig.autoCenter && $attrs.focusOnAutoCenter===undefined ) ||
-                ($attrs.focusOnAutoCenter && $attrs.focusOnAutoCenter=='true') ) {
-              offset = offset - window.document.body.clientHeight/2 + $element[0].clientHeight/2;
-            }
-            else{
-              offset = offset - extraOffset;
-            }
-
-            $('body').animate({ scrollTop: offset }, {
-              speed: speed,
-              complete: function complete() {
-                // Focus element (if input)
-                $element[0].focus();
-              }
-            });
-          }
-        });
-      });
-    }
-  };
-})
-
-.provider('focusOnConfig', function(){
-  var _offset = 0;
-  var _autoCenter = false;
-
-  this.autoCenter = function(value){
-    _autoCenter = value;
-  };
-
-  this.offset = function(value){
-    _offset = value;
-  };
-
-  this.$get = function(){
+angular.module('ts.utils').directive('focusOn', function($window, focusOnConfig){
     return {
-      offset: _offset,
-      autoCenter:_autoCenter
-    };
-  };
+      link: function($scope, $element, $attrs) {
+        var listener = angular.noop;
+        $attrs.$observe('focusOn', function(newVal){
+          // Stop listening to old event name
+          listener();
+          // Listen to new event name
+          listener = $scope.$on(newVal, function(speed){
+            speed = speed || 1000;
+            // Center element on screen
+            if($element.parents('.reveal-modal').length) {
+              var targetWindow = $element.parents('.reveal-modal .content');
+              targetWindow.animate({
+                scrollTop: $element.offset().top - targetWindow.offset().top + targetWindow.scrollTop()
+              }, {
+                speed: speed,
+                complete: function complete() {
+                  // Focus element (if input)
+                  $element[0].focus();
+                }
+              });
+            }
+            else {
+              var offset = $element.offset().top;
 
-});
+              // Use provider configured offset
+              var extraOffset = focusOnConfig.offset;
+
+              // If attribute is set override provider configured offset
+              if($attrs.focusOnOffset !== undefined){
+                extraOffset = parseInt($attrs.focusOnOffset);
+              }
+
+              // Check if provider or attribute set autoCenter/auto-center to true if so use offset/2 ignores the extra
+              // offset in this case
+              if(
+                (
+                (
+                  focusOnConfig.autoCenter ||
+                  focusOnConfig.autoCenterInputs && $element[0].tagName.toUpperCase()=='INPUT' ||
+                  focusOnConfig.autoCenterInputs && $element[0].tagName.toUpperCase()=='TEXTAREA'
+                )
+                && $attrs.focusOnAutoCenter===undefined ) ||
+                ($attrs.focusOnAutoCenter && $attrs.focusOnAutoCenter=='true') ) {
+                offset = offset - window.innerHeight/2 - $element[0].clientHeight/2;
+              }
+              else{
+                offset = offset - extraOffset;
+              }
+
+              $('body').animate({ scrollTop: offset }, {
+                speed: speed,
+                complete: function complete() {
+                  // Focus element (if input)
+                  $element[0].focus();
+                }
+              });
+            }
+          });
+        });
+      }
+    };
+  })
+
+  .provider('focusOnConfig', function(){
+    var focusConfig = {
+      offset: 0,
+      autoCenter:false,
+      autoCenterInputs:false
+    };
+
+    this.autoCenter = function(value){
+      focusConfig.autoCenter = value;
+    };
+
+    this.autoCenterInputs = function(value){
+      focusConfig.autoCenterInputs = value;
+    };
+
+    this.offset = function(value){
+      focusConfig.offset = value;
+    };
+
+    this.$get = function(){
+      return focusConfig;
+    };
+
+  });
