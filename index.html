@@ -3,12 +3,13 @@
 
   <head>
     <meta charset="utf-8" />
-    <title>AngularJS Plunker</title>
+    <title>TS-Utils Test Bed</title>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
     <script src="https://code.angularjs.org/1.5.0-rc.0/angular.js"></script>
     <script src="bower_components/angular-ts-utils/src/utils.js"></script>
     <script src="bower_components/angular-ts-utils/src/focusOn.js"></script>
     <script src="bower_components/angular-ts-utils/src/tooltip.js"></script>
+    <script src="bower_components/angular-ts-utils/src/dropDown.js"></script>
     <script src="bower_components/angular-ts-utils/dist/ts-utils-templates.js"></script>
     <script src="app.js"></script>
     <link rel="stylesheet" type="text/css" href="bower_components/angular-ts-utils/src/styles/ts-tooltip.css">
@@ -16,15 +17,25 @@
 
   <body ng-controller="MainCtrl as mainCtrl">
     <p>Hello {{mainCtrl.foo.bar}}!</p>
+
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dapibus ligula vel ante varius, at gravida leo condimentum. Vivamus eget dolor erat. Phasellus sit amet euismod lorem, non aliquet nunc. Praesent ac egestas ligula. Donec convallis finibus tellus eu viverra. Sed tincidunt lectus ac orci luctus, vitae sodales ex congue. Ut lectus dui, molestie a lectus tempor, sodales ullamcorper metus. Vivamus eu nisl non enim dignissim elementum eu et elit. Pellentesque vulputate nulla nisi, ac ultrices ante fringilla consectetur. Nunc a varius justo. Integer interdum, lectus vel pretium venenatis, massa dui pulvinar dui, elementum dignissim felis diam at ipsum. Vivamus vitae viverra nisi.
+    </p>
+    <p>
+      Maecenas elementum mauris posuere lacus finibus, a vestibulum sem tincidunt. Praesent egestas dolor at lectus euismod, ut laoreet eros semper. Sed commodo, nunc et congue venenatis, risus metus congue orci, a dictum ante purus in dui. Fusce sagittis <span style='color:blue;cursor:pointer' ts-tooltip="rhoncus felis" ts-tooltip-direction="bottom">rhoncus felis</span> ac iaculis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed id consectetur velit, vitae hendrerit odio. Donec vulputate dapibus nisl, et varius nunc lobortis a.
+    </p>
+
     <input type="checkbox" ng-model="mainCtrl.foo.someBool"/>
     This is some stuff before the button
     <button
+        style="display:inline-block"
         ts-tooltip-event="click"
         ts-tooltip="Something that shows up in there what is the width of this thing dictated by"
         ts-tooltip-direction="bottom">
       Bottom Click Me
     </button>
     <button
+        style="display:inline-block"
         ts-tooltip-show="mainCtrl.foo.someBool"
         ng-click="mainCtrl.jumpDown()"
         ts-tooltip="Something that shows up in there what is the width of this thing dictated by"
@@ -32,12 +43,14 @@
       Top
     </button>
     <button
+        style="display:inline-block"
         ng-click="mainCtrl.jumpDown()"
         ts-tooltip="Something that shows up in there what is the width of this thing dictated by"
         ts-tooltip-direction="left">
       Left
     </button>
     <button
+        style="display:inline-block"
         ng-click="mainCtrl.jumpDown()"
         ts-tooltip="Something that shows up in there what is the width of this thing dictated by"
         ts-tooltip-direction="right">
@@ -53,6 +66,13 @@
     
     <div ng-repeat="thing in mainCtrl.things">
       {{thing}} This is some stuff
+    </div>
+
+    
+    <pre>{{mainCtrl.foo.someTestModel|json}}</pre>
+    <div  ts-drop-down="mainCtrl.things"
+          ng-model="mainCtrl.foo.someTestModel">
+      <div>This is some stuff</div>
     </div>
   </body>
 
