@@ -1,7 +1,6 @@
 
 .ts-tooltip-container{
     position:relative;
-    display:inline-block;
 }
 .arrow-box-container{
     position:absolute;
@@ -10,9 +9,10 @@
     position: relative;
     background: rgba(255,255,255, 1);
     border: 1px solid rgba(204, 204, 204, 1);
+    border-radius:4px;
     box-shadow: 0 1px 3px rgba(200,200,200,0.7);
     padding:20px;
-    min-width:150px;
+    max-width:300px;
 }
 
 /* Left */
