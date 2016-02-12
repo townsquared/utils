@@ -1,5 +1,9 @@
 angular.module('testApp', ['ts.utils'])
 
+  .config(function(focusOnConfigProvider){
+    // focusOnConfigProvider.autoCenterInputs(true);
+  })
+
   .controller('MainCtrl', function($rootScope) {
     this.foo = {
       bar: 'world',
@@ -8,6 +12,14 @@ angular.module('testApp', ['ts.utils'])
 
     this.jumpDown = function(){
       $rootScope.$broadcast('someElementFocus')
+    }
+
+    this.jumpToInput = function(){
+      $rootScope.$broadcast('someInputFocus')
+    }
+
+    this.jumpToSpan = function(){
+      $rootScope.$broadcast('somethingElse')
     }
 
     var temp = [];
