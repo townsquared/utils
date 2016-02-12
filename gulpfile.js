@@ -1,6 +1,7 @@
 var gulp = require('gulp'),
   plugins = require('gulp-load-plugins')(),
-  ngHtml2Js = require("gulp-ng-html2js");
+  ngHtml2Js = require("gulp-ng-html2js"),
+  mergeStream = require("merge-stream");
 
 
 var paths = {
@@ -18,16 +19,23 @@ gulp.task('watch', ['default'], function(){
 gulp.task('default', scripts(paths));
 function scripts(paths) {
   return function() {
-    var stream = gulp.src(paths.src)
+    var htmlStream = gulp.src(paths.html)
+      .pipe(ngHtml2Js({
+        moduleName: "ts.utils",
+        prefix: "templates/"
+      }));
+
+    var jsStream = gulp.src(paths.src);
+    var mergedStream = mergeStream(htmlStream,jsStream)
       .pipe(plugins.sourcemaps.init())
       .pipe(plugins.plumber())
       .pipe(plugins.babel())
       .pipe(plugins.angularFilesort())
-    stream
+      jsStream
       .pipe(plugins.concat(paths.file))
       .pipe(plugins.sourcemaps.write('.'))
       .pipe(gulp.dest(paths.dest));
-    return stream
+    return mergedStream
       .pipe(plugins.concat(paths.fileMin))
       // TODO: no annotate due to rumors of issues with ui-router
       // .pipe(plugins.ngAnnotate())
@@ -38,7 +46,8 @@ function scripts(paths) {
   };
 }
 
-gulp.task('html2js', templates(paths))
+gulp.task('html2js', templates(paths));
+
 function templates(paths){
   return function(){
     return gulp.src(paths.html)
