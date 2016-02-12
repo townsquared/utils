@@ -1,162 +1,69 @@
+'use strict';
+
+angular.module('ts.utils', []);
 /**
- * autoGrow - Increases height of textarea while typing
+ * @TODO remove in liue of ui-utils
+ * General-purpose Event binding. Bind any event not natively supported by Angular
+ * Pass an object with keynames for events to ui-event
+ * Allows $event object and $params object to be passed
  *
- * @note use with min-height, max-height and box-sizing:border-box
+ * @example <input ui-event="{ focus : 'counter++', blur : 'someCallback()' }">
+ * @example <input ui-event="{ myCustomEvent : 'myEventHandler($event, $params)'}">
  *
- * @example
- * 	<textarea auto-grow></textarea>
+ * @param ui-event {string|object literal} The event to bind to as a string or a hash of events with their callbacks
  */
 'use strict';
 
-angular.module('ts.utils').directive('autoGrow', function ($timeout) {
-  return {
-    restrict: 'A',
-    link: function link($scope, $element, $attrs) {
-      function grow() {
-        $element[0].style.height = 0; // autoshrink - need accurate scrollHeight
-        $element[0].style.height = $element[0].scrollHeight + 'px';
-      }
-      $element.on('input', grow);
-      $timeout(grow, true);
-    }
-  };
-});
-/**
- * focusOn - Focuses an input on scope event
- *
- * @note depends on jQuery
- *
- * @example
- *   <input focus-on="someEventName">
- *   or
- *   <input focus-on="focus-row-{{$index}}">
- *   or
- *   <p focus-on="anotherEvent"></p>
- *   ...
- *   $scope.$broadcast('someEventName');
- *   $scope.$broadcast('focus-row-2');
- *   $scope.$broadcast('anotherEvent');
- *
- *   focusOnConfigProvider - can be injected into a .config(function(focusOnConfigProvider){}) block to configure the
- *   app wide settings for the focusOn directive
- *
- *   Settings include:
- *      offset - number of pixels to offset the scroll to for a header or other info that appears above the element you
- *      want to scroll to the top of the screen.  The offset is subtracted from the computed scroll position
- *
- *      autoCenter - boolean if true will use the element height and document body height to scroll the element to the
- *      center of the screen instead of the top
- *
- *   App wide settings can be overridden using attributes along with the focus-on directive.  The attributes for the
- *   offset and autoCenter are focus-on-offset and focus-on-auto-center respectively.
- *
- */
-'use strict';
-
-angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig) {
-  return {
-    link: function link($scope, $element, $attrs) {
-      var listener = angular.noop;
-      $attrs.$observe('focusOn', function (newVal) {
-        // Stop listening to old event name
-        listener();
-        // Listen to new event name
-        listener = $scope.$on(newVal, function (speed) {
-          speed = speed || 1000;
-          // Center element on screen
-          if ($element.parents('.reveal-modal').length) {
-            var targetWindow = $element.parents('.reveal-modal .content');
-            targetWindow.animate({
-              scrollTop: $element.offset().top - targetWindow.offset().top + targetWindow.scrollTop()
-            }, {
-              speed: speed,
-              complete: function complete() {
-                // Focus element (if input)
-                $element[0].focus();
-              }
-            });
-          } else {
-            var offset = $element.offset().top;
-
-            // Use provider configured offset
-            var extraOffset = focusOnConfig.offset;
-
-            // If attribute is set override provider configured offset
-            if ($attrs.focusOnOffset !== undefined) {
-              extraOffset = parseInt($attrs.focusOnOffset);
-            }
-
-            // Check if provider or attribute set autoCenter/auto-center to true if so use offset/2 ignores the extra
-            // offset in this case
-            if (focusOnConfig.autoCenter && $attrs.focusOnAutoCenter === undefined || $attrs.focusOnAutoCenter && $attrs.focusOnAutoCenter == 'true') {
-              offset = offset - window.innerHeight / 2 - $element[0].clientHeight / 2;
-            } else {
-              offset = offset - extraOffset;
-            }
-
-            $('body').animate({ scrollTop: offset }, {
-              speed: speed,
-              complete: function complete() {
-                // Focus element (if input)
-                $element[0].focus();
-              }
-            });
-          }
-        });
-      });
-    }
-  };
-}).provider('focusOnConfig', function () {
-  var _offset = 0;
-  var _autoCenter = false;
-
-  this.autoCenter = function (value) {
-    _autoCenter = value;
-  };
-
-  this.offset = function (value) {
-    _offset = value;
-  };
-
-  this.$get = function () {
+angular.module('ts.utils').directive('uiEvent', function ($parse) {
     return {
-      offset: _offset,
-      autoCenter: _autoCenter
+        priority: 100,
+        link: function link($scope, $elm, $attrs) {
+            var events = $scope.$eval($attrs.uiEvent);
+            angular.forEach(events, function (uiEvent, eventName) {
+                var fn = $parse(uiEvent);
+                $elm.bind(eventName, function (evt) {
+                    var params = Array.prototype.slice.call(arguments);
+                    //Take out first paramater (event object);
+                    params = params.splice(1);
+                    fn($scope, { $event: evt, $params: params });
+                    if (!$scope.$$phase) {
+                        $scope.$apply();
+                    }
+                });
+            });
+        }
     };
-  };
 });
-
 /**
- * scrollOn - $broadcast()/$emit() a $scope event with the location to trigger scrolling
+ * truncate - Truncates a string by a specified number of words
  *
  * @example
- *   <ul scroll-on="someEventName" style="overflow: auto">...</ul>
- *   ...
- *   var location = 'bottom';
- *   $scope.$broadcast('someEventName', location)
+ * 	<p>
+ * 		{{::post.body | truncate : 35}}
+ * 		<a ng-if="::post.body.split(' ').length>35">Read More</a>
+ * 	</p>
  *
- * @param location {'top'|'bottom'|offset} must be passed as event data
+ * @param {string} value  The string to be truncated
+ * @param {int} [wordLimit] The number of words to truncate at. If falsey, doesn't truncate.
+ * @param {string} [ellipses] The string to use as an ellipses. Default: '…' (&hellip;)
  */
 'use strict';
 
-angular.module('ts.utils').directive('scrollOn', function ($timeout) {
-  return {
-    link: {
-      pre: function pre($scope, $element, $attrs) {
-        $scope.$on($attrs.scrollOn, function (event, location) {
-          // let updates render
-          $timeout(function () {
-            if (location === 'bottom') {
-              $element[0].scrollTop = $element[0].scrollHeight;
-            } else if (location === 'top') {
-              $element[0].scrollTop = 0;
-            } else {
-              $element[0].scrollTop = location;
-            }
-          }, true);
-        });
-      }
+angular.module('ts.utils').filter('tsTruncate', function () {
+  return function (value, wordLimit) {
+    var ellipses = arguments.length <= 2 || arguments[2] === undefined ? '…' : arguments[2];
+
+    if (!value || !angular.isNumber(wordLimit)) return value;
+
+    var words = value.split(' ');
+
+    if (words.length > wordLimit) {
+      value = words.slice(0, wordLimit).join(' ');
+
+      if (ellipses) value += ellipses;
     }
+
+    return value;
   };
 });
 /**
@@ -305,72 +212,177 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
     }
   };
 });
+
 /**
- * truncate - Truncates a string by a specified number of words
+ * scrollOn - $broadcast()/$emit() a $scope event with the location to trigger scrolling
  *
  * @example
- * 	<p>
- * 		{{::post.body | truncate : 35}}
- * 		<a ng-if="::post.body.split(' ').length>35">Read More</a>
- * 	</p>
+ *   <ul scroll-on="someEventName" style="overflow: auto">...</ul>
+ *   ...
+ *   var location = 'bottom';
+ *   $scope.$broadcast('someEventName', location)
  *
- * @param {string} value  The string to be truncated
- * @param {int} [wordLimit] The number of words to truncate at. If falsey, doesn't truncate.
- * @param {string} [ellipses] The string to use as an ellipses. Default: '…' (&hellip;)
+ * @param location {'top'|'bottom'|offset} must be passed as event data
  */
 'use strict';
 
-angular.module('ts.utils').filter('tsTruncate', function () {
-  return function (value, wordLimit) {
-    var ellipses = arguments.length <= 2 || arguments[2] === undefined ? '…' : arguments[2];
-
-    if (!value || !angular.isNumber(wordLimit)) return value;
-
-    var words = value.split(' ');
-
-    if (words.length > wordLimit) {
-      value = words.slice(0, wordLimit).join(' ');
-
-      if (ellipses) value += ellipses;
+angular.module('ts.utils').directive('scrollOn', function ($timeout) {
+  return {
+    link: {
+      pre: function pre($scope, $element, $attrs) {
+        $scope.$on($attrs.scrollOn, function (event, location) {
+          // let updates render
+          $timeout(function () {
+            if (location === 'bottom') {
+              $element[0].scrollTop = $element[0].scrollHeight;
+            } else if (location === 'top') {
+              $element[0].scrollTop = 0;
+            } else {
+              $element[0].scrollTop = location;
+            }
+          }, true);
+        });
+      }
     }
-
-    return value;
   };
 });
 /**
- * @TODO remove in liue of ui-utils
- * General-purpose Event binding. Bind any event not natively supported by Angular
- * Pass an object with keynames for events to ui-event
- * Allows $event object and $params object to be passed
+ * focusOn - Focuses an input on scope event
  *
- * @example <input ui-event="{ focus : 'counter++', blur : 'someCallback()' }">
- * @example <input ui-event="{ myCustomEvent : 'myEventHandler($event, $params)'}">
+ * @note depends on jQuery
  *
- * @param ui-event {string|object literal} The event to bind to as a string or a hash of events with their callbacks
+ * @example
+ *   <input focus-on="someEventName">
+ *   or
+ *   <input focus-on="focus-row-{{$index}}">
+ *   or
+ *   <p focus-on="anotherEvent"></p>
+ *   ...
+ *   $scope.$broadcast('someEventName');
+ *   $scope.$broadcast('focus-row-2');
+ *   $scope.$broadcast('anotherEvent');
+ *
+ *   focusOnConfigProvider - can be injected into a .config(function(focusOnConfigProvider){}) block to configure the
+ *   app wide settings for the focusOn directive
+ *
+ *   Settings include:
+ *      offset - number of pixels to offset the scroll to for a header or other info that appears above the element you
+ *      want to scroll to the top of the screen.  The offset is subtracted from the computed scroll position
+ *
+ *      autoCenter - boolean if true will use the element height and document body height to scroll the element to the
+ *      center of the screen instead of the top
+ *
+ *   App wide settings can be overridden using attributes along with the focus-on directive.  The attributes for the
+ *   offset and autoCenter are focus-on-offset and focus-on-auto-center respectively.
+ *
  */
 'use strict';
 
-angular.module('ts.utils').directive('uiEvent', function ($parse) {
-    return {
-        priority: 100,
-        link: function link($scope, $elm, $attrs) {
-            var events = $scope.$eval($attrs.uiEvent);
-            angular.forEach(events, function (uiEvent, eventName) {
-                var fn = $parse(uiEvent);
-                $elm.bind(eventName, function (evt) {
-                    var params = Array.prototype.slice.call(arguments);
-                    //Take out first paramater (event object);
-                    params = params.splice(1);
-                    fn($scope, { $event: evt, $params: params });
-                    if (!$scope.$$phase) {
-                        $scope.$apply();
-                    }
-                });
+angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig) {
+  return {
+    link: function link($scope, $element, $attrs) {
+      var listener = angular.noop;
+      $attrs.$observe('focusOn', function (newVal) {
+        // Stop listening to old event name
+        listener();
+        // Listen to new event name
+        listener = $scope.$on(newVal, function (speed) {
+          speed = speed || 1000;
+          // Center element on screen
+          if ($element.parents('.reveal-modal').length) {
+            var targetWindow = $element.parents('.reveal-modal .content');
+            targetWindow.animate({
+              scrollTop: $element.offset().top - targetWindow.offset().top + targetWindow.scrollTop()
+            }, {
+              speed: speed,
+              complete: function complete() {
+                // Focus element (if input)
+                $element[0].focus();
+              }
             });
-        }
+          } else {
+            var offset = $element.offset().top;
+
+            // Use provider configured offset
+            var extraOffset = focusOnConfig.offset;
+
+            // If attribute is set override provider configured offset
+            if ($attrs.focusOnOffset !== undefined) {
+              extraOffset = parseInt($attrs.focusOnOffset);
+            }
+
+            // Check if provider or attribute set autoCenter/auto-center to true if so use offset/2 ignores the extra
+            // offset in this case
+            if (focusOnConfig.autoCenter && $attrs.focusOnAutoCenter === undefined || $attrs.focusOnAutoCenter && $attrs.focusOnAutoCenter == 'true') {
+              offset = offset - window.innerHeight / 2 - $element[0].clientHeight / 2;
+            } else {
+              offset = offset - extraOffset;
+            }
+
+            $('body').animate({ scrollTop: offset }, {
+              speed: speed,
+              complete: function complete() {
+                // Focus element (if input)
+                $element[0].focus();
+              }
+            });
+          }
+        });
+      });
+    }
+  };
+}).provider('focusOnConfig', function () {
+  var _offset = 0;
+  var _autoCenter = false;
+
+  this.autoCenter = function (value) {
+    _autoCenter = value;
+  };
+
+  this.offset = function (value) {
+    _offset = value;
+  };
+
+  this.$get = function () {
+    return {
+      offset: _offset,
+      autoCenter: _autoCenter
     };
+  };
+});
+/**
+ * autoGrow - Increases height of textarea while typing
+ *
+ * @note use with min-height, max-height and box-sizing:border-box
+ *
+ * @example
+ * 	<textarea auto-grow></textarea>
+ */
+'use strict';
+
+angular.module('ts.utils').directive('autoGrow', function ($timeout) {
+  return {
+    restrict: 'A',
+    link: function link($scope, $element, $attrs) {
+      function grow() {
+        $element[0].style.height = 0; // autoshrink - need accurate scrollHeight
+        $element[0].style.height = $element[0].scrollHeight + 'px';
+      }
+      $element.on('input', grow);
+      $timeout(grow, true);
+    }
+  };
 });
 'use strict';
 
-angular.module('ts.utils', []);
+(function (module) {
+  try {
+    module = angular.module('ts.utils');
+  } catch (e) {
+    module = angular.module('ts.utils', []);
+  }
+  module.run(['$templateCache', function ($templateCache) {
+    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main">\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>');
+  }]);
+})();
 //# sourceMappingURL=utils.js.map
