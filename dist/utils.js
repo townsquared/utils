@@ -96,7 +96,8 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
       tsTooltipEvent: '@',
       tsTooltipShow: '='
     },
-    link: function link($scope, $element, $attr) {
+    transclude: { content: '?tooltipContent' },
+    link: function link($scope, $element, $attr, $ctrl, $transclude) {
       var ARROW_SIZE = 10;
       var template = $templateCache.get('templates/tsTooltip.html');
       var direction = $scope.tsTooltipDirection || 'right';
@@ -109,9 +110,23 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
       var tooltipMain = newTooltip.find("#tooltipMain");
       tooltipMain.addClass(direction);
 
-      //$element.after(newTooltip);
+      // $element.after(newTooltip);
       document.body.insertBefore(newTooltip[0], document.body.childNodes[0]);
 
+      // Puts back the original contents, we need to transclude to get compiled clones of the
+      // child called tooltip-content if its present below.
+      $transclude(function (clone, scope) {
+        $element.append(clone);
+      });
+
+      // Allows for <tooltip-content></tooltip-content> to be specified inside the element a
+      // tooltip applies to
+      $transclude(function (clone, scope) {
+        tooltipMain.append(clone);
+      }, null, 'content');
+
+      // Taken from jQuery so we don't have to directly depend on it for this
+      // calculates the top left offsets for a given element.
       function offset(elem) {
         var docElem, win, rect, doc;
 
@@ -212,6 +227,15 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
     }
   };
 });
+
+// .directive('tooltipContent',function() {
+//   return {
+//     restrict:'E',
+//     compile:function(tElement,tAttrs) {
+
+//     }
+//   }
+// })
 
 /**
  * scrollOn - $broadcast()/$emit() a $scope event with the location to trigger scrolling
