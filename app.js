@@ -10,6 +10,9 @@ angular.module('testApp', ['ts.utils'])
       someBool:true
     };
 
+    this.stringFunction = function(){
+      return 'I am a string from a function call';
+    }
     this.jumpDown = function(){
       $rootScope.$broadcast('someElementFocus')
     }

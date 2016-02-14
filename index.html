@@ -6,13 +6,18 @@
     <title>TS-Utils Test Bed</title>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
     <script src="https://code.angularjs.org/1.5.0-rc.0/angular.js"></script>
+    
+    <!--
     <script src="bower_components/angular-ts-utils/src/utils.js"></script>
     <script src="bower_components/angular-ts-utils/src/focusOn.js"></script>
     <script src="bower_components/angular-ts-utils/src/tooltip.js"></script>
     <script src="bower_components/angular-ts-utils/src/dropDown.js"></script>
     <script src="bower_components/angular-ts-utils/dist/ts-utils-templates.js"></script>
+    -->
+
+    <script src="bower_components/angular-ts-utils/dist/utils.min.js"></script>
     <script src="app.js"></script>
-    <link rel="stylesheet" type="text/css" href="bower_components/angular-ts-utils/src/styles/ts-tooltip.css">
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-ts-utils/src/styles/ts-utils.css">
 
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
@@ -70,12 +75,15 @@
           ts-tooltip="Something that shows up in there what is the width of this thing dictated by"
           ts-tooltip-direction="bottom">
         Bottom Click Me
+        <tooltip-content>
+          <span ng-class="{'color-me-red':mainCtrl.foo.someBool}">Just a test</span>
+        </tooltip-content>
       </button>
       <button
           style="display:inline-block"
           ts-tooltip-show="mainCtrl.foo.someBool"
           ng-click="mainCtrl.jumpDown()"
-          ts-tooltip="Hello {{mainCtrl.foo.bar}}"
+          ts-tooltip="Hello {{mainCtrl.foo.bar}} <-- this is bound to the same model as the input above"
           ts-tooltip-direction="top">
         Top
       </button>
@@ -89,7 +97,7 @@
       <button
           style="display:inline-block"
           ng-click="mainCtrl.jumpDown()"
-          ts-tooltip="Something that shows up in there what is the width of this thing dictated by"
+          ts-tooltip="{{mainCtrl.stringFunction()}}"
           ts-tooltip-direction="right">
         Right
       </button>
@@ -97,7 +105,7 @@
       Test with something after it
     </div>
 
-    
+
 
     <div class="container">
       <div class="heading"><h1>DropDown Demo</h1></div>

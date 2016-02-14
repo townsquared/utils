@@ -22,13 +22,14 @@
     "test",
     "tests"
   ],
-  "_release": "e69f46d351",
+  "_release": "0260133108",
   "_resolution": {
     "type": "branch",
     "branch": "adds-tooltip-directive",
-    "commit": "e69f46d3515434e39296a7d1198a14ab91449fcc"
+    "commit": "026013310893593db9d99f89f69af3cfbccda0d9"
   },
-  "_source": "https://github.com/townsquared/utils.git",
+  "_source": "https://www.github.com/townsquared/utils.git",
   "_target": "adds-tooltip-directive",
-  "_originalSource": "https://github.com/townsquared/utils.git"
+  "_originalSource": "https://www.github.com/townsquared/utils.git",
+  "_direct": true
 }
