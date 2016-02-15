@@ -28,7 +28,8 @@
  *   offset and autoCenter are focus-on-offset and focus-on-auto-center respectively.
  *
  */
-angular.module('ts.utils').directive('focusOn', function($window, focusOnConfig){
+angular.module('ts.utils')
+  .directive('focusOn', function($window, focusOnConfig){
     return {
       link: function($scope, $element, $attrs) {
         var listener = angular.noop;
