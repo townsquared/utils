@@ -34,7 +34,7 @@ function scripts(paths) {
       .pipe(plugins.plumber())
       .pipe(plugins.babel())
       .pipe(plugins.angularFilesort())
-      mergedStream
+    mergedStream
       .pipe(plugins.concat(paths.file))
       .pipe(plugins.sourcemaps.write('.'))
       .pipe(gulp.dest(paths.dest));

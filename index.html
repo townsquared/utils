@@ -15,9 +15,17 @@
     <script src="bower_components/angular-ts-utils/dist/ts-utils-templates.js"></script>
     -->
 
+    
     <script src="bower_components/angular-ts-utils/dist/utils.min.js"></script>
+    
+    <!--
+    <script src="bower_components/angular-ts-utils/src/utils.js"></script>
+    <script src="bower_components/angular-ts-utils/src/dropDown.js"></script>
+    <script src="bower_components/angular-ts-utils/dist/ts-utils-templates.js"></script>
+    -->
     <script src="app.js"></script>
-    <link rel="stylesheet" type="text/css" href="bower_components/angular-ts-utils/src/styles/ts-utils.css">
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-ts-utils/dist/ts-utils.css">
+    <link rel="stylesheet" type="text/css" href="bower_components/font-awesome/css/font-awesome.css">
 
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
@@ -52,6 +60,21 @@
       <pre>{{mainCtrl.foo.someTestModel|json}}</pre>
     </div>
 
+    <div class="container">
+      <div class="heading"><h1>DropDown Demo</h1></div>
+
+      <div  ts-drop-down="mainCtrl.things"
+            ng-model="mainCtrl.foo.someTestModel"
+            ng-change="mainCtrl.selectionChanged()"
+            tabindex="0">
+            <ts-placeholder>
+              {{selectedItem?'Chosen value: '+selectedItem:'Choose Item'}}
+            </ts-placeholder>
+            <ts-list-item>
+              This is some stuff {{item}} what if this is longer <i ng-if="item==98" class="fa fa-asterisk"></i>
+            </ts-list-item>
+      </div>
+    </div>
 
     <div class="container">
 
@@ -60,6 +83,18 @@
       <input type="text" ng-model="mainCtrl.foo.bar"/>
       <p>Hello {{mainCtrl.foo.bar}}!</p>
 
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dapibus ligula vel ante varius, at gravida leo condimentum. Vivamus eget dolor erat. Phasellus sit amet euismod lorem, non aliquet nunc. Praesent ac egestas ligula. Donec convallis finibus tellus eu viverra. Sed tincidunt lectus ac orci luctus, vitae sodales ex congue. Ut lectus dui, molestie a lectus tempor, sodales ullamcorper metus. Vivamus eu nisl non enim dignissim elementum eu et elit. Pellentesque vulputate nulla nisi, ac ultrices ante fringilla consectetur. Nunc a varius justo. Integer interdum, lectus vel pretium venenatis, massa dui pulvinar dui, elementum dignissim felis diam at ipsum. Vivamus vitae viverra nisi.
+      </p>
+      <p>
+        Maecenas elementum mauris posuere lacus finibus, a vestibulum sem tincidunt. Praesent egestas dolor at lectus euismod, ut laoreet eros semper. Sed commodo, nunc et congue venenatis, risus metus congue orci, a dictum ante purus in dui. Fusce sagittis <span style='color:blue;cursor:pointer' ts-tooltip="rhoncus felis" ts-tooltip-direction="bottom">rhoncus felis</span> ac iaculis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed id consectetur velit, vitae hendrerit odio. Donec vulputate dapibus nisl, et varius nunc lobortis a.
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dapibus ligula vel ante varius, at gravida leo condimentum. Vivamus eget dolor erat. Phasellus sit amet euismod lorem, non aliquet nunc. Praesent ac egestas ligula. Donec convallis finibus tellus eu viverra. Sed tincidunt lectus ac orci luctus, vitae sodales ex congue. Ut lectus dui, molestie a lectus tempor, sodales ullamcorper metus. Vivamus eu nisl non enim dignissim elementum eu et elit. Pellentesque vulputate nulla nisi, ac ultrices ante fringilla consectetur. Nunc a varius justo. Integer interdum, lectus vel pretium venenatis, massa dui pulvinar dui, elementum dignissim felis diam at ipsum. Vivamus vitae viverra nisi.
+      </p>
+      <p>
+        Maecenas elementum mauris posuere lacus finibus, a vestibulum sem tincidunt. Praesent egestas dolor at lectus euismod, ut laoreet eros semper. Sed commodo, nunc et congue venenatis, risus metus congue orci, a dictum ante purus in dui. Fusce sagittis <span style='color:blue;cursor:pointer' ts-tooltip="rhoncus felis" ts-tooltip-direction="bottom">rhoncus felis</span> ac iaculis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed id consectetur velit, vitae hendrerit odio. Donec vulputate dapibus nisl, et varius nunc lobortis a.
+      </p>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dapibus ligula vel ante varius, at gravida leo condimentum. Vivamus eget dolor erat. Phasellus sit amet euismod lorem, non aliquet nunc. Praesent ac egestas ligula. Donec convallis finibus tellus eu viverra. Sed tincidunt lectus ac orci luctus, vitae sodales ex congue. Ut lectus dui, molestie a lectus tempor, sodales ullamcorper metus. Vivamus eu nisl non enim dignissim elementum eu et elit. Pellentesque vulputate nulla nisi, ac ultrices ante fringilla consectetur. Nunc a varius justo. Integer interdum, lectus vel pretium venenatis, massa dui pulvinar dui, elementum dignissim felis diam at ipsum. Vivamus vitae viverra nisi.
       </p>
@@ -107,14 +142,6 @@
 
 
 
-    <div class="container">
-      <div class="heading"><h1>DropDown Demo</h1></div>
-
-      <div  ts-drop-down="mainCtrl.things"
-            ng-model="mainCtrl.foo.someTestModel">
-        <div>This is some stuff</div>
-      </div>
-    </div>
     
   </body>
 

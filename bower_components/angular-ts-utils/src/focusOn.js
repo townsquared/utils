@@ -36,8 +36,7 @@
         // Stop listening to old event name
         listener();
         // Listen to new event name
-        listener = $scope.$on(newVal, function(speed){
-          speed = speed || 1000;
+        listener = $scope.$on(newVal, function(speed = 1000){
           // Center element on screen
           if($element.parents('.reveal-modal').length) {
             var targetWindow = $element.parents('.reveal-modal .content');
@@ -66,7 +65,7 @@
             // offset in this case
             if( (focusOnConfig.autoCenter && $attrs.focusOnAutoCenter===undefined ) ||
                 ($attrs.focusOnAutoCenter && $attrs.focusOnAutoCenter=='true') ) {
-              offset = offset - window.innerHeight/2 - $element[0].clientHeight/2;
+              offset = offset - window.document.body.clientHeight/2 + $element[0].clientHeight/2;
             }
             else{
               offset = offset - extraOffset;

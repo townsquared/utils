@@ -1,15 +1,19 @@
 angular.module('testApp', ['ts.utils'])
 
-  .config(function(focusOnConfigProvider){
-    // focusOnConfigProvider.autoCenterInputs(true);
-  })
+  // .config(function(focusOnConfigProvider){
+  //   focusOnConfigProvider.autoCenterInputs(true);
+  // })
 
-  .controller('MainCtrl', function($rootScope) {
+  .controller('MainCtrl', function($rootScope, $log) {
     this.foo = {
       bar: 'world',
-      someBool:true
+      someBool:true,
+      someTestModel:1
     };
 
+    this.selectionChanged = function() {
+      $log.info('changed '+this.foo.someTestModel);
+    }
     this.stringFunction = function(){
       return 'I am a string from a function call';
     }

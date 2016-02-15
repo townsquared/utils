@@ -17,6 +17,7 @@
     "tests"
   ],
   "dependencies": {
-    "angular-ts-utils": "https://github.com/townsquared/utils.git#adds-tooltip-directive"
+    "angular-ts-utils": "https://github.com/townsquared/utils.git#drop-down-selection-box",
+    "font-awesome": "~4.5.0"
   }
 }

@@ -22,14 +22,17 @@
     "test",
     "tests"
   ],
-  "_release": "0260133108",
+  "dependencies": {
+    "font-awesome": "~4.5.0"
+  },
+  "_release": "a25af8e167",
   "_resolution": {
     "type": "branch",
-    "branch": "adds-tooltip-directive",
-    "commit": "026013310893593db9d99f89f69af3cfbccda0d9"
+    "branch": "drop-down-selection-box",
+    "commit": "a25af8e16761991c6345cd9daf6398994639193e"
   },
-  "_source": "https://www.github.com/townsquared/utils.git",
-  "_target": "adds-tooltip-directive",
-  "_originalSource": "https://www.github.com/townsquared/utils.git",
+  "_source": "https://github.com/townsquared/utils.git",
+  "_target": "drop-down-selection-box",
+  "_originalSource": "https://github.com/townsquared/utils.git",
   "_direct": true
 }
