@@ -1,4 +1,12 @@
 <div class="drop-down-container">
-  <div ng-transclude ng-repeat="thing in tsDropDown">
+  <div class="selected-item-container">
+  </div><div class="arrow-container">
+    <div ng-if="!dropDownOpen" class="drop-down-arrow"><i class="fa fa-angle-down"></i></div>
+    <div ng-if="dropDownOpen" class="drop-down-arrow"><i class="fa fa-angle-up"></i></div>
+  </div>
+  <div ng-show="dropDownOpen"
+       class="drop-down-list-container">
+    <ul>
+    </ul>
   </div>
 </div>
