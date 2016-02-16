@@ -1,9 +1,8 @@
-<button
-  ng-click="focusOnCtrl.jumpToInput()">
+<button ng-click="focusOnCtrl.jumpToInput()">
   Focus on the input
 </button>
-<button
-  ng-click="focusOnCtrl.jumpToSpan()">
+
+<button ng-click="focusOnCtrl.jumpToSpan()">
   Focus on the span
 </button>
 
@@ -11,9 +10,17 @@
   {{thing}} Testing
 </div>
 
-<div focus-on='someElementFocus' focus-on-auto-center='true'>A place to jump to</div>
-<input type="text" focus-on='someInputFocus' />
-<span focus-on='somethingElse'>Something else to focus on</span>
+<div  focus-on='someElementFocus'
+      focus-on-auto-center='true'>
+  A place to jump to
+</div>
+
+<input  type="text"
+        focus-on='someInputFocus' />
+
+<span focus-on='somethingElse'>
+  Something else to focus on
+</span>
 
 <div ng-repeat="thing in focusOnCtrl.things">
   {{thing}} This is some stuff
