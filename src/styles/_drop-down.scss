@@ -1,3 +1,5 @@
+$drop-down-padding: 10px;
+$list-item-padding: 5px;
 
 [ts-drop-down]{
 
@@ -11,15 +13,20 @@
       display: table-cell;
       width: 100%;
       cursor: pointer;
-      padding: 10px;
+      padding: $drop-down-padding;
       border-right: solid 1px black;
     }
 
     .arrow-container{
       display: table-cell;
       cursor: pointer;
-      padding: 10px;
-
+      padding: $drop-down-padding;
+      &.arrow-default:before {
+        content: '\25BC';
+      }
+      &.arrow-open:before {
+        content: '\25B2';
+      }
       &:hover {
         background-color: #aaf8ff;
       }
@@ -38,7 +45,7 @@
         li {
           list-style-type: none;
           box-sizing: border-box;
-          padding: 10px;
+          padding: $list-item-padding;
           cursor: pointer;
           &.highlighted {
             background-color: #aaf8ff;
@@ -51,7 +58,6 @@
 
   outline:none;
   &:focus {
-    outline-style: solid;
-outline-width: 1px;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.40);
   }
 }

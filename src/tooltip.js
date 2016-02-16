@@ -16,6 +16,7 @@
  *
  */
 
+'use strict';
 
 angular.module('ts.utils')
 
@@ -37,14 +38,17 @@ angular.module('ts.utils')
         var eventType = $scope.tsTooltipEvent || 'mouseenter';
         var isVisible = false;
 
-        var newTooltip = $compile(template)($scope);
-        newTooltip[0].style.visibility = 'hidden';
+        var tooltipContainer = $compile(template)($scope);
+        tooltipContainer[0].style.visibility = 'hidden';
 
-        var tooltipMain = newTooltip.find("#tooltipMain");
+        var newTooltip = tooltipContainer.children()[0];
+
+
+        var tooltipMain = tooltipContainer.find("#tooltipMain");
         tooltipMain.addClass(direction);
 
-        // $element.after(newTooltip);
-        document.body.insertBefore(newTooltip[0],document.body.childNodes[0]);
+        // $element.after(tooltipContainer);
+        document.body.insertBefore(tooltipContainer[0],document.body.childNodes[0]);
 
         // Puts back the original contents, we need to transclude to get compiled clones of the
         // child called tooltip-content if its present below.
@@ -83,42 +87,43 @@ angular.module('ts.utils')
           }
         }
 
-        var origOffset = offset(newTooltip[0]);
+        var origOffset = offset(newTooltip);
 
         function makeVisible(){
           if(!isVisible){
 
             isVisible = true;
+            tooltipContainer[0].style.visibility='visible';
 
-            newTooltip[0].style.visibility='visible';
-
-            var elementOffset = offset($element[0]);
+            let elementOffset = offset($element[0]),
+                leftCommon = elementOffset.left-origOffset.left,
+                topCommon = elementOffset.top-origOffset.top;
 
             //Sets the common top for left and right, or common left for top and bottom
             switch(direction){
               case 'right':
               case 'left':
-                newTooltip[0].style.top=(elementOffset.top-origOffset.top+$element[0].offsetHeight - tooltipMain[0].offsetHeight/2-ARROW_SIZE)+'px';
+                newTooltip.style.top = (topCommon + $element[0].offsetHeight - tooltipMain[0].offsetHeight/2 - ARROW_SIZE) + 'px';
                 break;
               case 'top':
               case 'bottom':
-                newTooltip[0].style.left=elementOffset.left-origOffset.left+$element[0].offsetWidth/2-tooltipMain[0].offsetWidth/2+'px';
+                newTooltip.style.left = leftCommon + $element[0].offsetWidth/2 - tooltipMain[0].offsetWidth/2 + 'px';
                 break;
             }
 
             //Sets the specific left or top values for each direction
             switch(direction) {
               case 'right':
-                newTooltip[0].style.left=elementOffset.left-origOffset.left+$element[0].offsetWidth+ARROW_SIZE+'px';
+                newTooltip.style.left = leftCommon + $element[0].offsetWidth+ARROW_SIZE + 'px';
                 break;
               case 'left':
-                newTooltip[0].style.left=(elementOffset.left-origOffset.left-tooltipMain[0].offsetWidth - ARROW_SIZE )+'px';
+                newTooltip.style.left = (leftCommon-tooltipMain[0].offsetWidth - ARROW_SIZE ) + 'px';
                 break;
               case 'top':
-                newTooltip[0].style.top=elementOffset.top-origOffset.top - tooltipMain[0].offsetHeight-ARROW_SIZE+ 'px';
+                newTooltip.style.top = topCommon - tooltipMain[0].offsetHeight - ARROW_SIZE + 'px';
                 break;
               case 'bottom':
-                newTooltip[0].style.top=elementOffset.top-origOffset.top + $element[0].offsetHeight+ARROW_SIZE+ 'px';
+                newTooltip.style.top = topCommon + $element[0].offsetHeight + ARROW_SIZE + 'px';
                 break;
             }
 
@@ -128,7 +133,7 @@ angular.module('ts.utils')
         function makeInvisible() {
           if(isVisible){
             isVisible = false;
-            newTooltip[0].style.visibility = 'hidden';
+            tooltipContainer[0].style.visibility = 'hidden';
           }
         }
 

@@ -122,7 +122,7 @@ angular.module('ts.utils')
 
             }
 
-            compiledListItem[0].style.width=(textDisplayElement[0].offsetWidth-12)+'px';
+            compiledListItem[0].style.width=(textDisplayElement[0].offsetWidth)+'px';
 
             dropDownUnorderedList.append(compiledListItem);
           }, null, 'listItem');
