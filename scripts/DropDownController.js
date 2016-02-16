@@ -14,7 +14,7 @@ angular.module('testApp')
   this.things = temp;          
 
   this.selectionChanged = function() {
-    $log.info('changed '+this.foo.someTestModel);
+    $log.info('changed '+this.someTestModel);
   };
 
   this.smallList = [
