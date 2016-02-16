@@ -22,6 +22,6 @@
   Something else to focus on
 </span>
 
-<div ng-repeat="thing in focusOnCtrl.things">
+<div ng-repeat="thing in focusOnCtrl.things|limitTo:40">
   {{thing}} This is some stuff
 </div>
