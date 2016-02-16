@@ -22,7 +22,8 @@
   border-style: dotted;
   border-width: 2px;
   border-color: green;
-  border-background: #ffffff;
+  margin-top:1em;
+  margin-bottom:1em;
 }
 
 .code{
