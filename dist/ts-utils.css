@@ -1,29 +1,97 @@
-.drop-down-container{
-    position:relative;
-    display: table;
-    width:100%;
-    border:solid 1px black;
-}
-.selected-item-container{
-    display:table-cell;
-    width:100%;
-    cursor:pointer;
-    padding:10px;
-    border-right: solid 1px black;
-}
-.arrow-container{
-    display:table-cell;
-    cursor:pointer;
-    padding:10px;
-}
+.ts-tooltip-container {
+  position: relative; }
+  .ts-tooltip-container .arrow-box-container {
+    position: absolute; }
+  .ts-tooltip-container .ts-tooltip-main {
+    position: relative;
+    background: white;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(200, 200, 200, 0.7);
+    padding: 1rem;
+    max-width: 300px;
+    /* Left */
+    /* Right */
+    /* Bottom */
+    /* Top */ }
+    .ts-tooltip-container .ts-tooltip-main.right:after, .ts-tooltip-container .ts-tooltip-main.right:before {
+      right: 100%;
+      top: 50%;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none; }
+    .ts-tooltip-container .ts-tooltip-main.right:after {
+      border-color: rgba(255, 255, 255, 0);
+      border-width: 10px;
+      margin-top: -10px;
+      border-right-color: white; }
+    .ts-tooltip-container .ts-tooltip-main.right:before {
+      border-color: rgba(204, 204, 204, 0);
+      border-width: 11px;
+      margin-top: -11px;
+      border-right-color: #cccccc; }
+    .ts-tooltip-container .ts-tooltip-main.left:after, .ts-tooltip-container .ts-tooltip-main.left:before {
+      left: 100%;
+      top: 50%;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none; }
+    .ts-tooltip-container .ts-tooltip-main.left:after {
+      border-color: rgba(255, 255, 255, 0);
+      border-width: 10px;
+      margin-top: -10px;
+      border-left-color: white; }
+    .ts-tooltip-container .ts-tooltip-main.left:before {
+      border-color: rgba(204, 204, 204, 0);
+      border-width: 11px;
+      margin-top: -11px;
+      border-left-color: #cccccc; }
+    .ts-tooltip-container .ts-tooltip-main.bottom:after, .ts-tooltip-container .ts-tooltip-main.bottom:before {
+      bottom: 100%;
+      left: 50%;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none; }
+    .ts-tooltip-container .ts-tooltip-main.bottom:after {
+      border-color: rgba(255, 255, 255, 0);
+      border-width: 10px;
+      margin-left: -10px;
+      border-bottom-color: white; }
+    .ts-tooltip-container .ts-tooltip-main.bottom:before {
+      border-color: rgba(204, 204, 204, 0);
+      border-width: 11px;
+      margin-left: -11px;
+      border-bottom-color: #cccccc; }
+    .ts-tooltip-container .ts-tooltip-main.top:after, .ts-tooltip-container .ts-tooltip-main.top:before {
+      top: 100%;
+      left: 50%;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none; }
+    .ts-tooltip-container .ts-tooltip-main.top:after {
+      border-color: rgba(255, 255, 255, 0);
+      border-width: 10px;
+      margin-left: -10px;
+      border-top-color: white; }
+    .ts-tooltip-container .ts-tooltip-main.top:before {
+      border-color: rgba(204, 204, 204, 0);
+      border-width: 11px;
+      margin-left: -11px;
+      border-top-color: #cccccc; }
 
-.arrow-container:hover{
-    background-color: #aaf8ff;
-}
-.drop-down-list-container{
-    position:absolute;
-    left: -1px;
-
+<<<<<<< HEAD
     background-color: white;
     border: solid 1px black;
 }
@@ -164,3 +232,43 @@
     border-width: 11px;
     margin-left: -11px;
 }
+=======
+[ts-drop-down] {
+  outline: none; }
+  [ts-drop-down] .drop-down-container {
+    position: relative;
+    display: table;
+    width: 100%;
+    border: solid 1px black; }
+    [ts-drop-down] .drop-down-container .selected-item-container {
+      display: table-cell;
+      width: 100%;
+      cursor: pointer;
+      padding: 10px;
+      border-right: solid 1px black; }
+    [ts-drop-down] .drop-down-container .arrow-container {
+      display: table-cell;
+      cursor: pointer;
+      padding: 10px; }
+      [ts-drop-down] .drop-down-container .arrow-container:hover {
+        background-color: #aaf8ff; }
+    [ts-drop-down] .drop-down-container .drop-down-list-container {
+      position: absolute;
+      z-index: 2;
+      left: -1px;
+      background-color: white;
+      border: solid 1px black; }
+      [ts-drop-down] .drop-down-container .drop-down-list-container ul {
+        margin: 0;
+        -webkit-padding-start: 0; }
+        [ts-drop-down] .drop-down-container .drop-down-list-container ul li {
+          list-style-type: none;
+          box-sizing: border-box;
+          padding: 10px;
+          cursor: pointer; }
+          [ts-drop-down] .drop-down-container .drop-down-list-container ul li.highlighted {
+            background-color: #aaf8ff; }
+  [ts-drop-down]:focus {
+    outline-style: solid;
+    outline-width: 1px; }
+>>>>>>> Updates that get everything functional
