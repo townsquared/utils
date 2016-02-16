@@ -6,10 +6,9 @@ var gulp = require('gulp'),
 //Shared configuration/paths for tasks
 var paths = {
   src: ['src/**/*.js'],
-  css: ['src/**/*.css'],
+  sass: ['*.scss'],
   html: ['src/templates/*.html'],
   file: 'utils.js',
-  cssFile: 'ts-utils.css',
   fileMin: 'utils.min.js',
   dest: './dist'
 };
@@ -34,7 +33,7 @@ function scripts(paths) {
       .pipe(plugins.plumber())
       .pipe(plugins.babel())
       .pipe(plugins.angularFilesort())
-    mergedStream
+      mergedStream
       .pipe(plugins.concat(paths.file))
       .pipe(plugins.sourcemaps.write('.'))
       .pipe(gulp.dest(paths.dest));
@@ -51,9 +50,9 @@ function scripts(paths) {
 // Scripts END
 
 // Styles START
-gulp.task('styles', function(){
-  return gulp.src(paths.css)
-    .pipe(plugins.concat(paths.cssFile))
+gulp.task('sass', function () {
+  return gulp.src(paths.sass, {cwd:'./src/styles/'})
+    .pipe(plugins.sass.sync().on('error', plugins.sass.logError))
     .pipe(gulp.dest(paths.dest));
 });
 // Styles END
@@ -67,7 +66,7 @@ function templates(paths){
         prefix: "templates/"
       }))
       .pipe(plugins.concat('ts-utils-templates.js'))
-      .pipe(gulp.dest("./dist"))
+      .pipe(gulp.dest(paths.dest))
   }
 };
 
@@ -76,5 +75,5 @@ gulp.task('html2js', templates(paths));
 
 
 // Default task START
-gulp.task('default', ['scripts', 'styles']);
+gulp.task('default', ['scripts', 'sass']);
 // Default task END

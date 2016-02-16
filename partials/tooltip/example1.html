@@ -1,0 +1,13 @@
+<button
+  style="display:inline-block; margin-left:15em;"
+
+  ts-tooltip-event="click"
+  ts-tooltip="This tooltip toggles on click"
+  ts-tooltip-direction="bottom">
+  Bottom (Click)
+  <tooltip-content>
+    <div ng-class="{'color-me-red':tooltipCtrl.someBool}">
+      Just a test
+    </div>
+  </tooltip-content>
+</button>

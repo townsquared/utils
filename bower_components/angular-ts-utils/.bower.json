@@ -22,14 +22,12 @@
     "test",
     "tests"
   ],
-  "dependencies": {
-    "font-awesome": "~4.5.0"
-  },
-  "_release": "a25af8e167",
+  "dependencies": {},
+  "_release": "5200e73d9b",
   "_resolution": {
     "type": "branch",
     "branch": "drop-down-selection-box",
-    "commit": "a25af8e16761991c6345cd9daf6398994639193e"
+    "commit": "5200e73d9bdf21270e79e331c7be2a22df810b86"
   },
   "_source": "https://github.com/townsquared/utils.git",
   "_target": "drop-down-selection-box",

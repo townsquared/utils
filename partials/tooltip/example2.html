@@ -1,0 +1,33 @@
+<input type="text" ng-model="tooltipCtrl.bar" ts-tooltip="Text in input is bound in the value for the tooltip top example below"/>
+
+<button
+  style="display:inline-block; margin-left:25em;"
+
+  ts-tooltip-show="tooltipCtrl.someBool"
+  ts-tooltip="Hello {{tooltipCtrl.bar}} this is bound to the same model as the input above.  Tooltip opens based on boolean and toggles boolean on click."
+  ts-tooltip-direction="top"
+  ng-click="tooltipCtrl.someBool=!tooltipCtrl.someBool">
+  Top (Click)
+</button>
+<button
+  style="display:inline-block; margin-left:25em;"
+
+  ts-tooltip="Opens left"
+  ts-tooltip-direction="left">
+  Left (Hover)
+</button>
+<button
+  style="display:inline-block; margin-left:25em;"
+  
+  ts-tooltip="{{tooltipCtrl.stringFunction()}}"
+  ts-tooltip-direction="right">
+  Right (Hover)
+</button>
+<p>
+  <label>
+    <input type="checkbox" ng-model="tooltipCtrl.someBool"/>
+    Toggle this label to affect the bottom and top tooltip examples. Opens the top tooltip and changes a directive in the bottom tooltip.
+  </label>  
+</p>
+
+<p><code class="binding-display">tooltipCtrl = {{tooltipCtrl|json}}</code></p>

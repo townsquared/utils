@@ -1,0 +1,9 @@
+<div  ts-drop-down="dropDownCtrl.smallList"
+      ng-model="dropDownCtrl.someOtherModel">
+  <ts-placeholder>{{ selectedItem ? ('Chosen value: '+selectedItem.label) : 'Choose Item'}}</ts-placeholder>
+  <ts-list-item>
+    <div style="color:{{item.interactive===false?'gray':'black'}}">
+      {{item.label}}
+    </div>
+  </ts-list-item>
+</div>

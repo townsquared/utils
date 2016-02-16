@@ -2,6 +2,11 @@
   padding: 1rem;
   border: 1px solid black;
   border-radius: .5rem;
+  margin-bottom: 1em;
+}
+.inner-container{
+  padding: 1rem;
+  margin-bottom: 1em;
 }
 .heading{
   border-bottom: 1px solid black;
@@ -9,4 +14,25 @@
 }
 .color-me-red{
   color:red;
+  font-size: 2em;
+}
+
+.binding-display{
+  padding:1em;
+  border-style: dotted;
+  border-width: 2px;
+  border-color: green;
+  border-background: #ffffff;
+}
+
+.code{
+  padding:1em;
+  border-style: double;
+  border-width: 2px;
+  border-color: blue;
+  border-background: #ffffff;
+}
+
+.drop-down-demo-1{
+  width:300px;
 }

@@ -1,0 +1,23 @@
+<div class="container">
+  <div class="heading"><h1>DropDown Demo</h1></div>
+
+  <div class="inner-container">
+    <div class="heading"><h2>DropDown Demo Controller</h2></div>
+    <div hljs hljs-include="'scripts/DropDownController.js'"></div>
+  </div>
+
+  <div class="inner-container">
+    <div class="heading"><h2>Example 1 - With model predefined in controller</h2></div>
+    <div ng-include="'partials/dropDown/example1.html'"></div>
+    <p><div class="binding-display">dropDownCtrl.someTestModel={{dropDownCtrl.someTestModel|json}}</div></p>
+    <div hljs hljs-include="'partials/dropDown/example1.html'"></div>
+  </div>
+
+  <div class="inner-container">
+    <div class="heading"><h2>Example 2 - Initial value not defined</h2></div>
+    <div ng-include="'partials/dropDown/example2.html'"></div>
+    <p><div class="binding-display">dropDownCtrl.someOtherModel={{dropDownCtrl.someOtherModel|json}}</div></p>
+    <div hljs hljs-include="'partials/dropDown/example2.html'"></div>
+  </div>
+
+</div>

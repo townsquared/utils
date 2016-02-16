@@ -1,39 +1,32 @@
-angular.module('testApp', ['ts.utils'])
+angular.module('testApp', ['ts.utils', 'hljs', 'ui.router'])
 
   // .config(function(focusOnConfigProvider){
   //   focusOnConfigProvider.autoCenterInputs(true);
   // })
 
-  .controller('MainCtrl', function($rootScope, $log) {
-    this.foo = {
-      bar: 'world',
-      someBool:true,
-      someTestModel:1
-    };
-
-    this.selectionChanged = function() {
-      $log.info('changed '+this.foo.someTestModel);
-    }
-    this.stringFunction = function(){
-      return 'I am a string from a function call';
-    }
-    this.jumpDown = function(){
-      $rootScope.$broadcast('someElementFocus')
-    }
-
-    this.jumpToInput = function(){
-      $rootScope.$broadcast('someInputFocus')
-    }
-
-    this.jumpToSpan = function(){
-      $rootScope.$broadcast('somethingElse')
-    }
-
-    var temp = [];
-    for (var i = 100 - 1; i >= 0; i--) {
-      temp.push(i);
-    };
-    this.things = temp;
-
-
-  });
+  .config(function($stateProvider, $urlRouterProvider) {
+    //
+    // For any unmatched url, redirect to /focusOnDemo
+    $urlRouterProvider.otherwise("/focusOnDemo");
+    //
+    // Now set up the states
+    $stateProvider
+      .state('focusOnDemo', {
+        url: "/focusOnDemo",
+        templateUrl: "partials/focusOnDemo.html",
+        controller: 'FocusOnController',
+        controllerAs:'focusOnCtrl'
+      })
+      .state('dropDownDemo', {
+        url: "/dropDownDemo",
+        templateUrl: "partials/dropDownDemo.html",
+        controller: 'DropDownController',
+        controllerAs: 'dropDownCtrl'
+      })
+      .state('tooltipDemo', {
+        url: "/tooltipDemo",
+        templateUrl: "partials/tooltipDemo.html",
+        controller:'TooltipController',
+        controllerAs: 'tooltipCtrl'
+      });
+  })

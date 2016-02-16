@@ -1,0 +1,16 @@
+<div  ts-drop-down="dropDownCtrl.things"
+      ng-model="dropDownCtrl.someTestModel"
+      ng-change="dropDownCtrl.selectionChanged()"
+      class="drop-down-demo-1">
+  <ts-placeholder>{{selectedItem?'Chosen value: '+selectedItem:'Choose Item'}}</ts-placeholder>
+  <ts-list-item>
+    <div ng-if="item.interactive===false" style="color:gray">
+      Non interactive item
+    </div>
+    <div ng-if="item.interactive!==false">
+      Custom template value: {{item}}
+      <!-- Items divisible by 4 marked with *** --->
+      <span ng-if="item%4==0">***</span>
+    </div>
+  </ts-list-item>
+</div>
