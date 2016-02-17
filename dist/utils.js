@@ -103,6 +103,7 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
       var direction = $scope.tsTooltipDirection || 'right';
       var eventType = $scope.tsTooltipEvent || 'mouseenter';
       var isVisible = false;
+      var tooltipScope;
 
       var tooltipContainer = $compile(template)($scope);
       tooltipContainer[0].style.visibility = 'hidden';
@@ -118,6 +119,7 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
       // Puts back the original contents, we need to transclude to get compiled clones of the
       // child called tooltip-content if its present below.
       $transclude(function (clone, scope) {
+        tooltipScope = scope;
         $element.append(clone);
       });
 
@@ -227,18 +229,15 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
           }
         });
       }
+
+      //Clean up the tooltip and destroy the scope for the transcluded element
+      $scope.$on('$destroy', function () {
+        tooltipScope.$destroy();
+        newTooltip.remove();
+      });
     }
   };
 });
-
-// .directive('tooltipContent',function() {
-//   return {
-//     restrict:'E',
-//     compile:function(tElement,tAttrs) {
-
-//     }
-//   }
-// })
 
 /**
  * scrollOn - $broadcast()/$emit() a $scope event with the location to trigger scrolling
@@ -340,11 +339,7 @@ angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig
 
             // Check if provider or attribute set autoCenter/auto-center to true if so use offset/2 ignores the extra
             // offset in this case
-<<<<<<< HEAD
             if ((focusOnConfig.autoCenter || focusOnConfig.autoCenterInputs && $element[0].tagName.toUpperCase() == 'INPUT' || focusOnConfig.autoCenterInputs && $element[0].tagName.toUpperCase() == 'TEXTAREA') && $attrs.focusOnAutoCenter === undefined || $attrs.focusOnAutoCenter && $attrs.focusOnAutoCenter == 'true') {
-=======
-            if (focusOnConfig.autoCenter && $attrs.focusOnAutoCenter === undefined || $attrs.focusOnAutoCenter && $attrs.focusOnAutoCenter == 'true') {
->>>>>>> Updates that get everything functional
               offset = offset - window.innerHeight / 2 - $element[0].clientHeight / 2;
             } else {
               offset = offset - extraOffset;
