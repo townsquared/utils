@@ -337,7 +337,7 @@ angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig
 
             // Check if provider or attribute set autoCenter/auto-center to true if so use offset/2 ignores the extra
             // offset in this case
-            if (focusOnConfig.autoCenter && $attrs.focusOnAutoCenter === undefined || $attrs.focusOnAutoCenter && $attrs.focusOnAutoCenter == 'true') {
+            if ((focusOnConfig.autoCenter || focusOnConfig.autoCenterInputs && $element[0].tagName.toUpperCase() == 'INPUT' || focusOnConfig.autoCenterInputs && $element[0].tagName.toUpperCase() == 'TEXTAREA') && $attrs.focusOnAutoCenter === undefined || $attrs.focusOnAutoCenter && $attrs.focusOnAutoCenter == 'true') {
               offset = offset - window.innerHeight / 2 - $element[0].clientHeight / 2;
             } else {
               offset = offset - extraOffset;
@@ -356,22 +356,26 @@ angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig
     }
   };
 }).provider('focusOnConfig', function () {
-  var _offset = 0;
-  var _autoCenter = false;
+  var focusConfig = {
+    offset: 0,
+    autoCenter: false,
+    autoCenterInputs: false
+  };
 
   this.autoCenter = function (value) {
-    _autoCenter = value;
+    focusConfig.autoCenter = value;
+  };
+
+  this.autoCenterInputs = function (value) {
+    focusConfig.autoCenterInputs = value;
   };
 
   this.offset = function (value) {
-    _offset = value;
+    focusConfig.offset = value;
   };
 
   this.$get = function () {
-    return {
-      offset: _offset,
-      autoCenter: _autoCenter
-    };
+    return focusConfig;
   };
 });
 /**
