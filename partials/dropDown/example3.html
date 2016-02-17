@@ -1,0 +1,11 @@
+<div  ts-drop-down="dropDownCtrl.quickList"
+      ts-drop-down-width="300"
+      ts-item-click="dropDownCtrl.takeAction(item)"
+      ng-model="dropDownCtrl.someOtherModel">
+  <ts-placeholder>{{ selectedItem ? ('Chosen value: '+selectedItem) : 'Choose Item'}}</ts-placeholder>
+  <ts-list-item>
+    <div>
+      {{item}}
+    </div>
+  </ts-list-item>
+</div>

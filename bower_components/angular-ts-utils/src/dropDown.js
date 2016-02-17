@@ -22,7 +22,9 @@ angular.module('ts.utils')
       },
       scope:{
         tsDropDownTemplate:'@',
-        tsDropDown: '='
+        tsDropDown: '=',
+        tsDropDownWidth: '=',
+        tsItemClick: '&'
       },
 
       templateUrl:'templates/tsDropDown.html',
@@ -99,33 +101,52 @@ angular.module('ts.utils')
           $scope.highlightedItem = $scope.tsDropDown[selectedIndex];
         }
 
-        $scope.tsDropDown.forEach(function(dropDownItem) {
-          $transclude($scope.$new(), function(clone, scope) {
-            scope.item = dropDownItem;
 
-            var listItem = ae(document.createElement('li'));
-            listItem.attr('ng-class', '{"highlighted":highlightedItem==item}');
-            var compiledListItem = $compile(listItem)(scope);
-            compiledListItem.append(clone[0]);
+        $scope.$watch('tsDropDown', function(){
+          if(angular.isArray($scope.tsDropDown)){
+            $scope.tsDropDown.forEach(function(dropDownItem) {
+              $transclude($scope.$new(), function(clone, scope) {
+                scope.item = dropDownItem;
 
-            if( !dropDownItem.hasOwnProperty('interactive') ||
-                dropDownItem.interactive === true) {
-              compiledListItem.on('click', function() {
-                updateSelected(dropDownItem);
-                $scope.$apply(toggleDropDown);
-              });
-              compiledListItem.on('mouseenter', function(){
-                $scope.highlightedItem = scope.item;
-                selectedIndex = $scope.tsDropDown.indexOf(scope.item);
-                $scope.$apply();
-              });
+                var listItem = ae(document.createElement('li'));
+                listItem.attr('ng-class', '{"highlighted":highlightedItem==item}');
+                var compiledListItem = $compile(listItem)(scope);
+                compiledListItem.append(clone[0]);
 
+                if( !dropDownItem.hasOwnProperty('interactive') ||
+                  dropDownItem.interactive === true) {
+                  compiledListItem.on('click', function() {
+                    updateSelected(dropDownItem);
+                    if($scope.tsItemClick)
+                      $scope.tsItemClick({item:dropDownItem});
+                    $scope.$apply(toggleDropDown);
+                  });
+                  compiledListItem.on('mouseenter', function(){
+                    $scope.highlightedItem = scope.item;
+                    selectedIndex = $scope.tsDropDown.indexOf(scope.item);
+                    $scope.$apply();
+                  });
+
+                }
+
+                compiledListItem[0].style.width=(scope.tsDropDownWidth||(textDisplayElement[0].offsetWidth))+'px';
+
+                dropDownUnorderedList.append(compiledListItem);
+              }, null, 'listItem');
+            });
+          }
+
+
+        });
+
+
+        $scope.$watch('tsDropDownWidth', function(newVal){
+          if(newVal){
+            for (var i = 0; i < dropDownUnorderedList.children().length; i++) {
+              var child = dropDownUnorderedList.children()[i];
+              child.style.width = newVal + 'px';
             }
-
-            compiledListItem[0].style.width=(textDisplayElement[0].offsetWidth)+'px';
-
-            dropDownUnorderedList.append(compiledListItem);
-          }, null, 'listItem');
+          }
         });
 
         //Initialize to first item is highlighted

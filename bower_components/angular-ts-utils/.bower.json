@@ -23,11 +23,11 @@
     "tests"
   ],
   "dependencies": {},
-  "_release": "5200e73d9b",
+  "_release": "8987277161",
   "_resolution": {
     "type": "branch",
     "branch": "drop-down-selection-box",
-    "commit": "5200e73d9bdf21270e79e331c7be2a22df810b86"
+    "commit": "89872771617b34c22c67afca559181ac30e5df89"
   },
   "_source": "https://github.com/townsquared/utils.git",
   "_target": "drop-down-selection-box",

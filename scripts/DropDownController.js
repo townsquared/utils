@@ -1,6 +1,6 @@
 angular.module('testApp')
 
-.controller('DropDownController',function($log){
+.controller('DropDownController',function($log, $window){
   var temp = [];
   for (var i = 0; i < 20; i++) {
     if(i%5==0) {
@@ -26,6 +26,15 @@ angular.module('testApp')
     { label:'item 4' },
     { label:'item 5' }
   ];
+
+  this.quickList = [
+    "Report",
+    "Download"
+  ];
   
   this.someTestModel = 5;
+
+  this.takeAction = function(data){
+    $window.alert(data)
+  }
 });

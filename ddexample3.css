@@ -1,0 +1,21 @@
+
+.example-3 [ts-drop-down] .drop-down-container .selected-item-container{
+  display: none;
+}
+
+.example-3 [ts-drop-down] .drop-down-container {
+  width: auto;
+}
+.example-3 [ts-drop-down]:focus{
+  box-shadow: none;
+}
+.example-3 [ts-drop-down] .drop-down-container{
+  border-radius: 5px;
+  border-width:0px;
+}
+.example-3 [ts-drop-down] .drop-down-container .arrow-container.arrow-default:before{
+  content: 'V';
+}
+.example-3 [ts-drop-down] .drop-down-container .arrow-container.arrow-open:before{
+  content: '^';
+}
