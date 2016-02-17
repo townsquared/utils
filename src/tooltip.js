@@ -37,6 +37,7 @@ angular.module('ts.utils')
         var direction = $scope.tsTooltipDirection || 'right';
         var eventType = $scope.tsTooltipEvent || 'mouseenter';
         var isVisible = false;
+        var tooltipScope;
 
         var tooltipContainer = $compile(template)($scope);
         tooltipContainer[0].style.visibility = 'hidden';
@@ -53,6 +54,7 @@ angular.module('ts.utils')
         // Puts back the original contents, we need to transclude to get compiled clones of the
         // child called tooltip-content if its present below.
         $transclude(function(clone, scope) {
+          tooltipScope = scope;
           $element.append(clone);
         });
 
@@ -168,18 +170,11 @@ angular.module('ts.utils')
           })
         }
 
-
-
-
+        //Clean up the tooltip and destroy the scope for the transcluded element
+        $scope.$on('$destroy',function() {
+          tooltipScope.$destroy();
+          newTooltip.remove();
+        });
       }
     };
-  })
-  // .directive('tooltipContent',function() {
-  //   return {
-  //     restrict:'E',
-  //     compile:function(tElement,tAttrs) {
-
-  //     }
-  //   }
-  // })
-;
+  });
