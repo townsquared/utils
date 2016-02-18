@@ -16,37 +16,46 @@ angular.module('ts.utils')
     return {
       restrict:'A',
       require: 'ngModel',
-      transclude: {
-        'listItem':'tsListItem',
-        'placeholder':'tsPlaceholder'
-      },
+      //transclude: {
+      //  'listItem':'tsListItem',
+      //  'placeholder':'tsPlaceholder'
+      //},
       scope:{
         tsDropDownTemplate:'@',
         tsDropDown: '=',
         tsDropDownWidth: '=',
         tsItemClick: '&'
       },
+      controller: function($scope){
+        this.setPlaceholder = function(transclude){
+          $scope.placeholderTransclude = transclude;
+        }
+        this.setListItem = function(transclude){
+          $scope.listItemTransclude = transclude;
+        }
+      },
 
-      templateUrl:'templates/tsDropDown.html',
-
-      link: function($scope, $element, $attr, ngModelCtrl, $transclude) {
+      link: function($scope, $element, $attr, ngModelCtrl) {
         let selectedIndex = 0,
-            itemsFlipped = false,
             ae = angular.element, //shorthand
             placeholderElement,
             placeholderScope,
-            selectedItem,
-            container = ae($element.children()[0]), //Container for all the drop down related parts
-            textDisplayElement = ae(container.children()[0]), //First child of the container is the place to put the placeholder or selected item
-            dropDownArrow = ae(container.children()[1]), //Second child is the drop down arrow/button
-            dropDownListContainer = ae(container.children()[2]), //Third child is the list container
-            dropDownUnorderedList = ae($element[0].querySelector('ul'));
+            selectedItem;
 
         //Makes the element focusable with the keyboard
         $element.attr('tabindex','0');
 
         $scope.direction = 'down';
         $scope.dropDownOpen = false;
+
+        var template = $templateCache.get('templates/tsDropDown.html');
+        var container = $compile(template)($scope); //Container for all the drop down related parts
+        $element.append(container);
+
+        let textDisplayElement = ae(container.children()[0]), //First child of the container is the place to put the placeholder or selected item
+          dropDownArrow = ae(container.children()[1]), //Second child is the drop down arrow/button
+          dropDownListContainer = ae(container.children()[2]), //Third child is the list container
+          dropDownUnorderedList = ae($element[0].querySelector('ul'))
 
         $element.on('keydown', function(event) {
           switch(event.keyCode){
@@ -63,7 +72,7 @@ angular.module('ts.utils')
                 toggleDropDown();
               }
               else { // otherwise if the list is open move up in the highlights.
-                $scope.$apply($scope.direction=='down'?moveHighlightUp:moveHighlightDown);
+                $scope.$apply(moveHighlightUp);
               }
               event.preventDefault();
               break;
@@ -74,7 +83,7 @@ angular.module('ts.utils')
               if(!$scope.dropDownOpen) {
                 toggleDropDown();
               } else {
-                $scope.$apply($scope.direction=='down'?moveHighlightDown:moveHighlightUp);
+                $scope.$apply(moveHighlightDown);
               }
               event.preventDefault();
               break;
@@ -105,34 +114,38 @@ angular.module('ts.utils')
         $scope.$watch('tsDropDown', function(){
           if(angular.isArray($scope.tsDropDown)){
             $scope.tsDropDown.forEach(function(dropDownItem) {
-              $transclude($scope.$new(), function(clone, scope) {
-                scope.item = dropDownItem;
 
-                var listItem = ae(document.createElement('li'));
-                listItem.attr('ng-class', '{"highlighted":highlightedItem==item}');
-                var compiledListItem = $compile(listItem)(scope);
-                compiledListItem.append(clone[0]);
+              if($scope.listItemTransclude){
+                $scope.listItemTransclude($scope.$new(), function(clone, scope) {
+                  scope.item = dropDownItem;
 
-                if( !dropDownItem.hasOwnProperty('interactive') ||
-                  dropDownItem.interactive === true) {
-                  compiledListItem.on('click', function() {
-                    updateSelected(dropDownItem);
-                    if($scope.tsItemClick)
-                      $scope.tsItemClick({item:dropDownItem});
-                    $scope.$apply(toggleDropDown);
-                  });
-                  compiledListItem.on('mouseenter', function(){
-                    $scope.highlightedItem = scope.item;
-                    selectedIndex = $scope.tsDropDown.indexOf(scope.item);
-                    $scope.$apply();
-                  });
+                  var listItem = ae(document.createElement('li'));
+                  listItem.attr('ng-class', '{"highlighted":highlightedItem==item}');
+                  var compiledListItem = $compile(listItem)(scope);
+                  compiledListItem.append(clone[0]);
 
-                }
+                  //Adds event handlers if the item isn't explicitly marked non interactive
+                  if( !dropDownItem.hasOwnProperty('interactive') ||
+                    dropDownItem.interactive === true) {
+                    compiledListItem.on('click', function() {
+                      updateSelected(dropDownItem);
+                      if($scope.tsItemClick)
+                        $scope.tsItemClick({item:dropDownItem});
+                      $scope.$apply(toggleDropDown);
+                    });
+                    compiledListItem.on('mouseenter', function(){
+                      $scope.highlightedItem = scope.item;
+                      selectedIndex = $scope.tsDropDown.indexOf(scope.item);
+                      $scope.$apply();
+                    });
 
-                compiledListItem[0].style.width=(scope.tsDropDownWidth||(textDisplayElement[0].offsetWidth))+'px';
+                  }
 
-                dropDownUnorderedList.append(compiledListItem);
-              }, null, 'listItem');
+                  compiledListItem[0].style.width=(scope.tsDropDownWidth||(textDisplayElement[0].offsetWidth))+'px';
+
+                  dropDownUnorderedList.append(compiledListItem);
+                });
+              }
             });
           }
 
@@ -152,20 +165,13 @@ angular.module('ts.utils')
         //Initialize to first item is highlighted
         $scope.highlightedItem = $scope.tsDropDown[selectedIndex];
 
-        $transclude($scope.$new(), function(clone, scope){
-          placeholderScope = scope;
-          placeholderElement = clone[0];
+        if($scope.placeholderTransclude){
+          $scope.placeholderTransclude($scope.$new(), function(clone, scope){
+            placeholderScope = scope;
+            placeholderElement = clone[0];
 
-          textDisplayElement.append(clone[0]);
-        }, null, 'placeholder');
-
-        function flipItems(){
-
-          //Flips the items in the list when opening upward
-          for (var i = 0; i < dropDownUnorderedList.children().length; i++) {
-            var childElement = dropDownUnorderedList.children()[i];
-            dropDownUnorderedList.prepend(childElement)
-          }
+            textDisplayElement.append(clone[0]);
+          });
         }
 
         // Take the height of the window divided by 2 to get the middle of the window
@@ -181,20 +187,11 @@ angular.module('ts.utils')
 
             dropDownListContainer[0].style.bottom = rect.height+'px';
             dropDownListContainer[0].style.top = 'auto';
-            if(!itemsFlipped){
-              flipItems();
-              itemsFlipped = true;
-            }
           }
           else{
             dropDownListContainer[0].style.top = rect.height+'px';
             dropDownListContainer[0].style.bottom = 'auto';
             $scope.direction = 'down';
-
-            if(itemsFlipped){
-              flipItems();
-              itemsFlipped = false;
-            }
           }
 
           $scope.dropDownOpen = !$scope.dropDownOpen;
@@ -234,4 +231,26 @@ angular.module('ts.utils')
       }
 
     };
+  })
+
+  .directive('tsPlaceholder', function(){
+    return {
+      restrict:'E',
+      require: '^tsDropDown',
+      transclude: 'element',
+      link: function(scope, iElem, iAttr, dropDownController, transclude){
+        dropDownController.setPlaceholder(transclude);
+      }
+    }
+  })
+
+  .directive('tsListItem', function(){
+    return {
+      restrict:'E',
+      require: '^tsDropDown',
+      transclude: 'element',
+      link: function(scope, iElem, iAttr, dropDownController, transclude){
+        dropDownController.setListItem(transclude);
+      }
+    }
   });
