@@ -30,40 +30,38 @@ angular.module('ts.utils')
         tsTooltipEvent:'@',
         tsTooltipShow:'='
       },
-      transclude:{content:'?tooltipContent'},
-      link: function($scope, $element, $attr, $ctrl, $transclude) {
+      controller: function($scope){
+        this.setTranscluded = function(transclude){
+          $scope.transcludedContentFn = transclude;
+        }
+      },
+      link: function($scope, $element, $attr) {
         var ARROW_SIZE = 10;
         var template = $templateCache.get('templates/tsTooltip.html');
         var direction = $scope.tsTooltipDirection || 'right';
         var eventType = $scope.tsTooltipEvent || 'mouseenter';
         var isVisible = false;
-        var tooltipScope;
 
         var tooltipContainer = $compile(template)($scope);
         tooltipContainer[0].style.visibility = 'hidden';
 
         var newTooltip = tooltipContainer.children()[0];
 
+        $scope.$watch(function(){return newTooltip.offsetWidth}, positionTooltip);
+        $scope.$watch(function(){return newTooltip.offsetHeight}, positionTooltip);
+        $scope.$watch(function(){return $element[0].getBoundingClientRect().top}, positionTooltip);
+        $scope.$watch(function(){return $element[0].getBoundingClientRect().left}, positionTooltip);
 
-        var tooltipMain = tooltipContainer.find("#tooltipMain");
-        tooltipMain.addClass(direction);
-
+        $scope.tooltipMain = tooltipContainer.find("#tooltipMain");
+        $scope.tooltipMain.addClass(direction);
         // $element.after(tooltipContainer);
         document.body.insertBefore(tooltipContainer[0],document.body.childNodes[0]);
-
-        // Puts back the original contents, we need to transclude to get compiled clones of the
-        // child called tooltip-content if its present below.
-        $transclude(function(clone, scope) {
-          tooltipScope = scope;
-          $element.append(clone);
-        });
-
-        // Allows for <tooltip-content></tooltip-content> to be specified inside the element a
-        // tooltip applies to
-        $transclude(function(clone, scope) {
-          tooltipMain.append(clone);
-        }, null, 'content');
-
+        if($scope.transcludedContentFn){
+          $scope.transcludedContentFn(function(clone, scope) {
+            $scope.tooltipMain.append(clone);
+            $scope.tooltipScope = scope;
+          });
+        }
 
         // Taken from jQuery so we don't have to directly depend on it for this
         // calculates the top left offsets for a given element.
@@ -91,44 +89,45 @@ angular.module('ts.utils')
 
         var origOffset = offset(newTooltip);
 
+        function positionTooltip(){
+          let elementOffset = offset($element[0]),
+            leftCommon = elementOffset.left-origOffset.left,
+            topCommon = elementOffset.top-origOffset.top;
+
+          //Sets the common top for left and right, or common left for top and bottom
+          switch(direction){
+            case 'right':
+            case 'left':
+              newTooltip.style.top = (topCommon + $element[0].offsetHeight - $scope.tooltipMain[0].offsetHeight/2 - ARROW_SIZE) + 'px';
+              break;
+            case 'top':
+            case 'bottom':
+              newTooltip.style.left = leftCommon + $element[0].offsetWidth/2 - $scope.tooltipMain[0].offsetWidth/2 + 'px';
+              break;
+          }
+
+          //Sets the specific left or top values for each direction
+          switch(direction) {
+            case 'right':
+              newTooltip.style.left = leftCommon + $element[0].offsetWidth+ARROW_SIZE + 'px';
+              break;
+            case 'left':
+              newTooltip.style.left = (leftCommon-$scope.tooltipMain[0].offsetWidth - ARROW_SIZE ) + 'px';
+              break;
+            case 'top':
+              newTooltip.style.top = topCommon - $scope.tooltipMain[0].offsetHeight - ARROW_SIZE + 'px';
+              break;
+            case 'bottom':
+              newTooltip.style.top = topCommon + $element[0].offsetHeight + ARROW_SIZE + 'px';
+              break;
+          }
+        }
+
         function makeVisible(){
           if(!isVisible){
-
+            positionTooltip();
             isVisible = true;
             tooltipContainer[0].style.visibility='visible';
-
-            let elementOffset = offset($element[0]),
-                leftCommon = elementOffset.left-origOffset.left,
-                topCommon = elementOffset.top-origOffset.top;
-
-            //Sets the common top for left and right, or common left for top and bottom
-            switch(direction){
-              case 'right':
-              case 'left':
-                newTooltip.style.top = (topCommon + $element[0].offsetHeight - tooltipMain[0].offsetHeight/2 - ARROW_SIZE) + 'px';
-                break;
-              case 'top':
-              case 'bottom':
-                newTooltip.style.left = leftCommon + $element[0].offsetWidth/2 - tooltipMain[0].offsetWidth/2 + 'px';
-                break;
-            }
-
-            //Sets the specific left or top values for each direction
-            switch(direction) {
-              case 'right':
-                newTooltip.style.left = leftCommon + $element[0].offsetWidth+ARROW_SIZE + 'px';
-                break;
-              case 'left':
-                newTooltip.style.left = (leftCommon-tooltipMain[0].offsetWidth - ARROW_SIZE ) + 'px';
-                break;
-              case 'top':
-                newTooltip.style.top = topCommon - tooltipMain[0].offsetHeight - ARROW_SIZE + 'px';
-                break;
-              case 'bottom':
-                newTooltip.style.top = topCommon + $element[0].offsetHeight + ARROW_SIZE + 'px';
-                break;
-            }
-
           }
         }
 
@@ -172,9 +171,21 @@ angular.module('ts.utils')
 
         //Clean up the tooltip and destroy the scope for the transcluded element
         $scope.$on('$destroy',function() {
-          tooltipScope.$destroy();
+          if($scope.tooltipScope)
+            $scope.tooltipScope.$destroy();
           newTooltip.remove();
         });
       }
     };
-  });
+  })
+  .directive('tsTooltipContent', function(){
+    return {
+      restrict:'E',
+      require: '^tsTooltip',
+      transclude: 'element',
+      link: function(scope, iElem, iAttr, tooltipController, transclude){
+        tooltipController.setTranscluded(transclude);
+      }
+    }
+  })
+;
