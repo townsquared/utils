@@ -1,4 +1,4 @@
-angular.module('testApp', ['ts.utils', 'hljs', 'ui.router'])
+angular.module('testApp', ['ts.utils', 'hljs', 'ui.router', 'toastr'])
 
   // .config(function(focusOnConfigProvider){
   //   focusOnConfigProvider.autoCenterInputs(true);
@@ -28,5 +28,9 @@ angular.module('testApp', ['ts.utils', 'hljs', 'ui.router'])
         templateUrl: "partials/tooltipDemo.html",
         controller:'TooltipController',
         controllerAs: 'tooltipCtrl'
+      })
+      .state('globalToastrMessage', {
+        url: "/globalToastrMessage",
+        templateUrl: "partials/globalToastrDemo.html"
       });
-  })
+  });
