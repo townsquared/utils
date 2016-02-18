@@ -17,8 +17,8 @@
     "tests"
   ],
   "dependencies": {
-    "angular-ts-utils": "https://github.com/townsquared/utils.git#drop-down-selection-box",
     "font-awesome": "~4.5.0",
-    "angular-ui-router": "ui-router#~0.2.18"
+    "angular-ui-router": "ui-router#~0.2.18",
+    "angular-ts-utils": "https://github.com/townsquared/utils.git#fixes-for-v1_3-compat"
   }
 }

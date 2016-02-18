@@ -23,14 +23,14 @@
     "tests"
   ],
   "dependencies": {},
-  "_release": "8987277161",
+  "_release": "c7ed8c9660",
   "_resolution": {
     "type": "branch",
-    "branch": "drop-down-selection-box",
-    "commit": "89872771617b34c22c67afca559181ac30e5df89"
+    "branch": "fixes-for-v1_3-compat",
+    "commit": "c7ed8c96602705074ea0796d4ac7433d062284a2"
   },
   "_source": "https://github.com/townsquared/utils.git",
-  "_target": "drop-down-selection-box",
+  "_target": "fixes-for-v1_3-compat",
   "_originalSource": "https://github.com/townsquared/utils.git",
   "_direct": true
 }

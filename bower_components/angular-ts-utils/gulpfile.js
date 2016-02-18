@@ -51,9 +51,14 @@ function scripts(paths) {
 
 // Styles START
 gulp.task('sass', function () {
-  return gulp.src(paths.sass, {cwd:'./src/styles/'})
+  var sassStream = gulp.src(paths.sass, {cwd:'./src/styles/'})
     .pipe(plugins.sass.sync().on('error', plugins.sass.logError))
     .pipe(gulp.dest(paths.dest));
+
+  var sassRawStream = gulp.src(paths.sass, {cwd:'./src/styles/'})
+    .pipe(gulp.dest(paths.dest+'/styles/'));
+
+  return mergeStream(sassRawStream, sassStream);
 });
 // Styles END
 
