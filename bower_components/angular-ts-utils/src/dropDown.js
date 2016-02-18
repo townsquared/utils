@@ -37,7 +37,6 @@ angular.module('ts.utils')
 
       link: function($scope, $element, $attr, ngModelCtrl) {
         let selectedIndex = 0,
-            itemsFlipped = false,
             ae = angular.element, //shorthand
             placeholderElement,
             placeholderScope,
@@ -175,15 +174,6 @@ angular.module('ts.utils')
           });
         }
 
-        function flipItems(){
-
-          //Flips the items in the list when opening upward
-          for (var i = 0; i < dropDownUnorderedList.children().length; i++) {
-            var childElement = dropDownUnorderedList.children()[i];
-            dropDownUnorderedList.prepend(childElement)
-          }
-        }
-
         // Take the height of the window divided by 2 to get the middle of the window
         // if the element's middle is lower than the middle of the window then open upward
         // otherwise open downward
@@ -197,20 +187,11 @@ angular.module('ts.utils')
 
             dropDownListContainer[0].style.bottom = rect.height+'px';
             dropDownListContainer[0].style.top = 'auto';
-            if(!itemsFlipped){
-              flipItems();
-              itemsFlipped = true;
-            }
           }
           else{
             dropDownListContainer[0].style.top = rect.height+'px';
             dropDownListContainer[0].style.bottom = 'auto';
             $scope.direction = 'down';
-
-            if(itemsFlipped){
-              flipItems();
-              itemsFlipped = false;
-            }
           }
 
           $scope.dropDownOpen = !$scope.dropDownOpen;

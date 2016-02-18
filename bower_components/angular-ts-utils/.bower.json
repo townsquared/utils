@@ -23,11 +23,11 @@
     "tests"
   ],
   "dependencies": {},
-  "_release": "c7ed8c9660",
+  "_release": "83bce90fcd",
   "_resolution": {
     "type": "branch",
     "branch": "fixes-for-v1_3-compat",
-    "commit": "c7ed8c96602705074ea0796d4ac7433d062284a2"
+    "commit": "83bce90fcda095f935cfeaae28af2d9ee3aeb92f"
   },
   "_source": "https://github.com/townsquared/utils.git",
   "_target": "fixes-for-v1_3-compat",
