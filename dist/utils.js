@@ -477,7 +477,7 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
               toggleDropDown();
             } else {
               // otherwise if the list is open move up in the highlights.
-              $scope.$apply($scope.direction == 'down' ? moveHighlightUp : moveHighlightDown);
+              $scope.$apply(moveHighlightUp);
             }
             event.preventDefault();
             break;
@@ -489,7 +489,7 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
             if (!$scope.dropDownOpen) {
               toggleDropDown();
             } else {
-              $scope.$apply($scope.direction == 'down' ? moveHighlightDown : moveHighlightUp);
+              $scope.$apply(moveHighlightDown);
             }
             event.preventDefault();
             break;
