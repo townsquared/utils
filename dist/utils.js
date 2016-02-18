@@ -399,18 +399,6 @@ angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig
     return focusConfig;
   };
 });
-'use strict';
-
-(function (module) {
-  try {
-    module = angular.module('ts.utils');
-  } catch (e) {
-    module = angular.module('ts.utils', []);
-  }
-  module.run(['$templateCache', function ($templateCache) {
-    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main">\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>');
-  }]);
-})();
 /**
  * ts-dropwdown - Shows a drop down list of items that can be selected from.
  *
@@ -448,7 +436,6 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
 
     link: function link($scope, $element, $attr, ngModelCtrl) {
       var selectedIndex = 0,
-          itemsFlipped = false,
           ae = angular.element,
           //shorthand
       placeholderElement = undefined,
@@ -582,15 +569,6 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
         });
       }
 
-      function flipItems() {
-
-        //Flips the items in the list when opening upward
-        for (var i = 0; i < dropDownUnorderedList.children().length; i++) {
-          var childElement = dropDownUnorderedList.children()[i];
-          dropDownUnorderedList.prepend(childElement);
-        }
-      }
-
       // Take the height of the window divided by 2 to get the middle of the window
       // if the element's middle is lower than the middle of the window then open upward
       // otherwise open downward
@@ -604,19 +582,10 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
 
           dropDownListContainer[0].style.bottom = rect.height + 'px';
           dropDownListContainer[0].style.top = 'auto';
-          if (!itemsFlipped) {
-            flipItems();
-            itemsFlipped = true;
-          }
         } else {
           dropDownListContainer[0].style.top = rect.height + 'px';
           dropDownListContainer[0].style.bottom = 'auto';
           $scope.direction = 'down';
-
-          if (itemsFlipped) {
-            flipItems();
-            itemsFlipped = false;
-          }
         }
 
         $scope.dropDownOpen = !$scope.dropDownOpen;
@@ -674,6 +643,18 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
     }
   };
 });
+'use strict';
+
+(function (module) {
+  try {
+    module = angular.module('ts.utils');
+  } catch (e) {
+    module = angular.module('ts.utils', []);
+  }
+  module.run(['$templateCache', function ($templateCache) {
+    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main">\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>');
+  }]);
+})();
 /**
  * autoGrow - Increases height of textarea while typing
  *
