@@ -43,7 +43,7 @@ angular.module('ts.utils')
         var isVisible = false;
 
         var tooltipContainer = $compile(template)($scope);
-        tooltipContainer[0].style.visibility = 'hidden';
+        //tooltipContainer[0].style.visibility = 'hidden';
 
         var newTooltip = tooltipContainer.children()[0];
 
@@ -89,9 +89,14 @@ angular.module('ts.utils')
 
         var origOffset = offset(newTooltip);
 
+        tooltipContainer.remove();
+
         function positionTooltip(){
-          let elementOffset = offset($element[0]),
-            leftCommon = elementOffset.left-origOffset.left,
+          let elementOffset = offset($element[0]);
+          if(elementOffset === undefined || origOffset == undefined) {
+            return;
+          }
+          let leftCommon = elementOffset.left-origOffset.left,
             topCommon = elementOffset.top-origOffset.top;
 
           //Sets the common top for left and right, or common left for top and bottom
@@ -127,14 +132,14 @@ angular.module('ts.utils')
           if(!isVisible){
             positionTooltip();
             isVisible = true;
-            tooltipContainer[0].style.visibility='visible';
+            document.body.insertBefore(tooltipContainer[0],document.body.childNodes[0]);
           }
         }
 
         function makeInvisible() {
           if(isVisible){
             isVisible = false;
-            tooltipContainer[0].style.visibility = 'hidden';
+            tooltipContainer.remove();
           }
         }
 
