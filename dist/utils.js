@@ -204,9 +204,9 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
 
       function makeVisible() {
         if (!isVisible) {
+          document.body.insertBefore(tooltipContainer[0], document.body.childNodes[0]);
           positionTooltip();
           isVisible = true;
-          document.body.insertBefore(tooltipContainer[0], document.body.childNodes[0]);
         }
       }
 
@@ -218,11 +218,7 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
       }
 
       function toggleVisibility() {
-        if (isVisible) {
-          makeInvisible();
-        } else {
-          makeVisible();
-        }
+        isVisible ? makeInvisible() : makeVisible();
       }
 
       if ($attr.tsTooltipShow === undefined) {

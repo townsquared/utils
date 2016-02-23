@@ -129,27 +129,22 @@ angular.module('ts.utils')
         }
 
         function makeVisible(){
-          if(!isVisible){
+          if(!isVisible) {
+            document.body.insertBefore(tooltipContainer[0],document.body.childNodes[0]);
             positionTooltip();
             isVisible = true;
-            document.body.insertBefore(tooltipContainer[0],document.body.childNodes[0]);
           }
         }
 
         function makeInvisible() {
-          if(isVisible){
+          if(isVisible) {
             isVisible = false;
             tooltipContainer.remove();
           }
         }
 
-        function toggleVisibility(){
-          if(isVisible) {
-            makeInvisible();
-          }
-          else {
-            makeVisible();
-          }
+        function toggleVisibility() {
+          isVisible ? makeInvisible() : makeVisible();
         }
 
         if($attr.tsTooltipShow === undefined) {
