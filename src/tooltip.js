@@ -36,6 +36,7 @@ angular.module('ts.utils')
         }
       },
       link: function($scope, $element, $attr) {
+        var origOffset;
         var ARROW_SIZE = 10;
         var template = $templateCache.get('templates/tsTooltip.html');
         var direction = $scope.tsTooltipDirection || 'right';
@@ -43,19 +44,20 @@ angular.module('ts.utils')
         var isVisible = false;
 
         var tooltipContainer = $compile(template)($scope);
-        //tooltipContainer[0].style.visibility = 'hidden';
 
         var newTooltip = tooltipContainer.children()[0];
 
-        $scope.$watch(function(){return newTooltip.offsetWidth}, positionTooltip);
-        $scope.$watch(function(){return newTooltip.offsetHeight}, positionTooltip);
-        $scope.$watch(function(){return $element[0].getBoundingClientRect().top}, positionTooltip);
-        $scope.$watch(function(){return $element[0].getBoundingClientRect().left}, positionTooltip);
+        // Fix the position of the tooltip if the height of the tooltip itself changes.  This is necessary for dynamic
+        // content when absolutely positioning the tooltips.  Tooltips must be absolutely positioned in order to be
+        // separated from having their width restricted by their parent element or having a static width and since the
+        // total size of the tooltip is needed to compute the offset for it's top left corner we must watch the height.
+        $scope.$watch(function(){return newTooltip.clientHeight}, positionTooltip);
 
         $scope.tooltipMain = tooltipContainer.find("#tooltipMain");
         $scope.tooltipMain.addClass(direction);
-        // $element.after(tooltipContainer);
+
         document.body.insertBefore(tooltipContainer[0],document.body.childNodes[0]);
+
         if($scope.transcludedContentFn){
           $scope.transcludedContentFn(function(clone, scope) {
             $scope.tooltipMain.append(clone);
@@ -87,11 +89,13 @@ angular.module('ts.utils')
           }
         }
 
-        var origOffset = offset(newTooltip);
 
         tooltipContainer.remove();
 
         function positionTooltip(){
+          if(!origOffset)
+            origOffset = offset(newTooltip);
+
           let elementOffset = offset($element[0]);
           if(elementOffset === undefined || origOffset == undefined) {
             return;
