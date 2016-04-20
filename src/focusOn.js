@@ -35,7 +35,7 @@ angular.module('ts.utils')
         var listener = angular.noop;
         var complete = function() {
           $element[0].focus();
-        }
+        };
 
         $attrs.$observe('focusOn', function(newVal){
           // Stop listening to old event name
@@ -43,8 +43,11 @@ angular.module('ts.utils')
           // Listen to new event name
           listener = $scope.$on(newVal, function(speed){
 
-            // Let users disable the scrolling effect by setting the auto-center attribute to "false"
-            if ($attrs.focusOnAutoCenter === 'false') return complete();
+            // Let users disable the scrolling effect by setting the auto-center
+            // attribute to "false"
+            if ($attrs.focusOnAutoCenter === 'false') {
+              return complete();
+            }
 
             speed = speed || 1000;
             // Center element on screen
