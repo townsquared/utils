@@ -28,7 +28,8 @@ angular.module('ts.utils')
         tsTooltip:'@',
         tsTooltipDirection:'@',
         tsTooltipEvent:'@',
-        tsTooltipShow:'='
+        tsTooltipShow:'=',
+        tsTooltipClass: '@'
       },
       controller: function($scope){
         this.setTranscluded = function(transclude){

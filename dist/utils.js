@@ -94,7 +94,8 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
       tsTooltip: '@',
       tsTooltipDirection: '@',
       tsTooltipEvent: '@',
-      tsTooltipShow: '='
+      tsTooltipShow: '=',
+      tsTooltipClass: '@'
     },
     controller: function controller($scope) {
       this.setTranscluded = function (transclude) {
@@ -649,7 +650,7 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
     module = angular.module('ts.utils', []);
   }
   module.run(['$templateCache', function ($templateCache) {
-    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main">\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>');
+    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main">\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>\n' + '');
   }]);
 })();
 /**
