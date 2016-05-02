@@ -27,7 +27,7 @@ try {
 }
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('templates/tsTooltip.html',
-    '<div class="ts-tooltip-container">\n' +
+    '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' +
     '  <div class="arrow-box-container">\n' +
     '    <div id="tooltipMain" class="ts-tooltip-main">\n' +
     '      {{tsTooltip}}\n' +
