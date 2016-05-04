@@ -33,11 +33,22 @@ angular.module('ts.utils')
     return {
       link: function($scope, $element, $attrs) {
         var listener = angular.noop;
+        var complete = function() {
+          $element[0].focus();
+        };
+
         $attrs.$observe('focusOn', function(newVal){
           // Stop listening to old event name
           listener();
           // Listen to new event name
           listener = $scope.$on(newVal, function(speed){
+
+            // Let users disable the scrolling effect by setting the auto-center
+            // attribute to "false"
+            if ($attrs.focusOnAutoCenter === 'false') {
+              return complete();
+            }
+
             speed = speed || 1000;
             // Center element on screen
             if($element.parents('.reveal-modal').length) {
@@ -46,10 +57,7 @@ angular.module('ts.utils')
                 scrollTop: $element.offset().top - targetWindow.offset().top + targetWindow.scrollTop()
               }, {
                 speed: speed,
-                complete: function complete() {
-                  // Focus element (if input)
-                  $element[0].focus();
-                }
+                complete: complete
               });
             }
             else {
@@ -82,10 +90,7 @@ angular.module('ts.utils')
 
               $('body').animate({ scrollTop: offset }, {
                 speed: speed,
-                complete: function complete() {
-                  // Focus element (if input)
-                  $element[0].focus();
-                }
+                complete: complete
               });
             }
           });
