@@ -10,6 +10,9 @@
  *        ts-tooltip="Something that shows up in there"         // The text to show in the tooltip
  *        ts-tooltip-direction="bottom"                         // The direction the tooltip pops up
  *        ts-tooltip-show="someModel.someBoolean"               // A boolean if set will use this instead of events
+ *        ts-tooltip-class="someClass"                          // Adds class to tooltip container
+ *        ts-tooltip-content-hover="someModel.someBoolean"      // A boolean if set will allow users to
+ *                                                              // hover over the tooltip content without closing it
  *        >
  *   Bottom Click Me
  * </button>
@@ -20,7 +23,7 @@
 
 angular.module('ts.utils')
 
-  .directive('tsTooltip', function($templateCache, $compile, $window){
+  .directive('tsTooltip', function($templateCache, $timeout, $compile, $window){
 
     return {
       restrict:'A',
@@ -29,7 +32,8 @@ angular.module('ts.utils')
         tsTooltipDirection:'@',
         tsTooltipEvent:'@',
         tsTooltipShow:'=',
-        tsTooltipClass: '@'
+        tsTooltipClass: '@',
+        tsTooltipContentHover: '@'
       },
       controller: function($scope){
         this.setTranscluded = function(transclude){
@@ -133,19 +137,42 @@ angular.module('ts.utils')
           }
         }
 
-        function makeVisible(){
-          if(!isVisible) {
-            document.body.insertBefore(tooltipContainer[0],document.body.childNodes[0]);
+        function makeVisible() {
+          if (!isVisible) {
+            document.body.insertBefore(tooltipContainer[0], document.body.childNodes[0]);
             positionTooltip();
             isVisible = true;
+            if($scope.tsTooltipContentHover) {
+              angular.element(tooltipContainer).bind('mouseleave', function(){
+                $scope.isHoveringContent = false;
+                removeTooltip();
+              });
+              angular.element(tooltipContainer).bind('mouseenter', function(){
+                $scope.isHoveringContent = true;
+              });
+            }
           }
         }
 
         function makeInvisible() {
-          if(isVisible) {
-            isVisible = false;
-            tooltipContainer.remove();
+          if (isVisible) {
+            if($scope.tsTooltipContentHover) {
+              $timeout( () => {
+                if($scope.isHoveringContent)
+                  return;
+                else {
+                  removeTooltip();
+                }
+              }, 250)
+            } else {
+              removeTooltip();
+            }
           }
+        }
+
+        function removeTooltip() {
+          isVisible = false;
+          tooltipContainer.remove();
         }
 
         function toggleVisibility() {

@@ -78,6 +78,9 @@ angular.module('ts.utils').filter('tsTruncate', function () {
  *        ts-tooltip="Something that shows up in there"         // The text to show in the tooltip
  *        ts-tooltip-direction="bottom"                         // The direction the tooltip pops up
  *        ts-tooltip-show="someModel.someBoolean"               // A boolean if set will use this instead of events
+ *        ts-tooltip-class="someClass"                          // Adds class to tooltip container
+ *        ts-tooltip-content-hover="someModel.someBoolean"      // A boolean if set will allow users to
+ *                                                              // hover over the tooltip content without closing it
  *        >
  *   Bottom Click Me
  * </button>
@@ -86,7 +89,7 @@ angular.module('ts.utils').filter('tsTruncate', function () {
 
 'use strict';
 
-angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $compile, $window) {
+angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $timeout, $compile, $window) {
 
   return {
     restrict: 'A',
@@ -95,7 +98,8 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
       tsTooltipDirection: '@',
       tsTooltipEvent: '@',
       tsTooltipShow: '=',
-      tsTooltipClass: '@'
+      tsTooltipClass: '@',
+      tsTooltipContentHover: '@'
     },
     controller: function controller($scope) {
       this.setTranscluded = function (transclude) {
@@ -204,14 +208,35 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
           document.body.insertBefore(tooltipContainer[0], document.body.childNodes[0]);
           positionTooltip();
           isVisible = true;
+          if ($scope.tsTooltipContentHover) {
+            angular.element(tooltipContainer).bind('mouseleave', function () {
+              $scope.isHoveringContent = false;
+              removeTooltip();
+            });
+            angular.element(tooltipContainer).bind('mouseenter', function () {
+              $scope.isHoveringContent = true;
+            });
+          }
         }
       }
 
       function makeInvisible() {
         if (isVisible) {
-          isVisible = false;
-          tooltipContainer.remove();
+          if ($scope.tsTooltipContentHover) {
+            $timeout(function () {
+              if ($scope.isHoveringContent) return;else {
+                removeTooltip();
+              }
+            }, 250);
+          } else {
+            removeTooltip();
+          }
         }
+      }
+
+      function removeTooltip() {
+        isVisible = false;
+        tooltipContainer.remove();
       }
 
       function toggleVisibility() {
@@ -397,6 +422,18 @@ angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig
     return focusConfig;
   };
 });
+'use strict';
+
+(function (module) {
+  try {
+    module = angular.module('ts.utils');
+  } catch (e) {
+    module = angular.module('ts.utils', []);
+  }
+  module.run(['$templateCache', function ($templateCache) {
+    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main">\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>\n' + '');
+  }]);
+})();
 /**
  * ts-dropwdown - Shows a drop down list of items that can be selected from.
  *
@@ -641,18 +678,6 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
     }
   };
 });
-'use strict';
-
-(function (module) {
-  try {
-    module = angular.module('ts.utils');
-  } catch (e) {
-    module = angular.module('ts.utils', []);
-  }
-  module.run(['$templateCache', function ($templateCache) {
-    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main">\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>\n' + '');
-  }]);
-})();
 /**
  * autoGrow - Increases height of textarea while typing
  *
