@@ -78,6 +78,9 @@ angular.module('ts.utils').filter('tsTruncate', function () {
  *        ts-tooltip="Something that shows up in there"         // The text to show in the tooltip
  *        ts-tooltip-direction="bottom"                         // The direction the tooltip pops up
  *        ts-tooltip-show="someModel.someBoolean"               // A boolean if set will use this instead of events
+ *        ts-tooltip-class="someClass"                          // Adds class to tooltip container
+ *        ts-tooltip-content-hover="someModel.someBoolean"      // A boolean if set will allow users to
+ *                                                              // hover over the tooltip content without closing it
  *        >
  *   Bottom Click Me
  * </button>
@@ -86,7 +89,7 @@ angular.module('ts.utils').filter('tsTruncate', function () {
 
 'use strict';
 
-angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $compile, $window) {
+angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $timeout, $compile, $window) {
 
   return {
     restrict: 'A',
@@ -94,7 +97,9 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
       tsTooltip: '@',
       tsTooltipDirection: '@',
       tsTooltipEvent: '@',
-      tsTooltipShow: '='
+      tsTooltipShow: '=',
+      tsTooltipClass: '@',
+      tsTooltipContentHover: '@'
     },
     controller: function controller($scope) {
       this.setTranscluded = function (transclude) {
@@ -102,39 +107,39 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
       };
     },
     link: function link($scope, $element, $attr) {
+      var origOffset;
       var ARROW_SIZE = 10;
       var template = $templateCache.get('templates/tsTooltip.html');
       var direction = $scope.tsTooltipDirection || 'right';
       var eventType = $scope.tsTooltipEvent || 'mouseenter';
       var isVisible = false;
 
+      //Compile the container for the bindings on the CSS and text tooltip contents
       var tooltipContainer = $compile(template)($scope);
-      tooltipContainer[0].style.visibility = 'hidden';
 
-      var newTooltip = tooltipContainer.children()[0];
+      //First DOM element child of the container, this is used for the position computations
+      var arrowBoxContainer = tooltipContainer.children()[0];
 
+      // Fix the position of the tooltip if the height of the tooltip itself changes.  This is necessary for dynamic
+      // content when absolutely positioning the tooltips.  Tooltips must be absolutely positioned in order to be
+      // separated from having their width restricted by their parent element or having a static width and since the
+      // total size of the tooltip is needed to compute the offset for it's top left corner we must watch the height.
       $scope.$watch(function () {
-        return newTooltip.offsetWidth;
-      }, positionTooltip);
-      $scope.$watch(function () {
-        return newTooltip.offsetHeight;
-      }, positionTooltip);
-      $scope.$watch(function () {
-        return $element[0].getBoundingClientRect().top;
-      }, positionTooltip);
-      $scope.$watch(function () {
-        return $element[0].getBoundingClientRect().left;
+        return arrowBoxContainer.clientHeight;
       }, positionTooltip);
 
+      // This is where we add the transcluded content will get placed it is one of the children of the container
       $scope.tooltipMain = tooltipContainer.find("#tooltipMain");
       $scope.tooltipMain.addClass(direction);
-      // $element.after(tooltipContainer);
-      document.body.insertBefore(tooltipContainer[0], document.body.childNodes[0]);
-      if ($scope.transcludedContentFn) {
-        $scope.transcludedContentFn(function (clone, scope) {
-          $scope.tooltipMain.append(clone);
-          $scope.tooltipScope = scope;
-        });
+
+      function addTranscludedContent() {
+        if ($scope.transcludedContentFn) {
+          $scope.transcludedContentFn(function (clone, scope) {
+            $scope.tooltipMain.empty();
+            $scope.tooltipMain.append(clone);
+            $scope.tooltipScope = scope;
+          });
+        }
       }
 
       // Taken from jQuery so we don't have to directly depend on it for this
@@ -161,63 +166,84 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
         }
       }
 
-      var origOffset = offset(newTooltip);
-
       function positionTooltip() {
-        var elementOffset = offset($element[0]),
-            leftCommon = elementOffset.left - origOffset.left,
+        if (!origOffset) origOffset = offset(arrowBoxContainer);
+
+        var elementOffset = offset($element[0]);
+        if (elementOffset === undefined || origOffset == undefined) {
+          return;
+        }
+        var leftCommon = elementOffset.left - origOffset.left,
             topCommon = elementOffset.top - origOffset.top;
 
         //Sets the common top for left and right, or common left for top and bottom
         switch (direction) {
           case 'right':
           case 'left':
-            newTooltip.style.top = topCommon + $element[0].offsetHeight - $scope.tooltipMain[0].offsetHeight / 2 - ARROW_SIZE + 'px';
+            arrowBoxContainer.style.top = topCommon + $element[0].offsetHeight - $scope.tooltipMain[0].offsetHeight / 2 - ARROW_SIZE + 'px';
             break;
           case 'top':
           case 'bottom':
-            newTooltip.style.left = leftCommon + $element[0].offsetWidth / 2 - $scope.tooltipMain[0].offsetWidth / 2 + 'px';
+            arrowBoxContainer.style.left = leftCommon + $element[0].offsetWidth / 2 - $scope.tooltipMain[0].offsetWidth / 2 + 'px';
             break;
         }
 
         //Sets the specific left or top values for each direction
         switch (direction) {
           case 'right':
-            newTooltip.style.left = leftCommon + $element[0].offsetWidth + ARROW_SIZE + 'px';
+            arrowBoxContainer.style.left = leftCommon + $element[0].offsetWidth + ARROW_SIZE + 'px';
             break;
           case 'left':
-            newTooltip.style.left = leftCommon - $scope.tooltipMain[0].offsetWidth - ARROW_SIZE + 'px';
+            arrowBoxContainer.style.left = leftCommon - $scope.tooltipMain[0].offsetWidth - ARROW_SIZE + 'px';
             break;
           case 'top':
-            newTooltip.style.top = topCommon - $scope.tooltipMain[0].offsetHeight - ARROW_SIZE + 'px';
+            arrowBoxContainer.style.top = topCommon - $scope.tooltipMain[0].offsetHeight - ARROW_SIZE + 'px';
             break;
           case 'bottom':
-            newTooltip.style.top = topCommon + $element[0].offsetHeight + ARROW_SIZE + 'px';
+            arrowBoxContainer.style.top = topCommon + $element[0].offsetHeight + ARROW_SIZE + 'px';
             break;
         }
       }
 
       function makeVisible() {
         if (!isVisible) {
+          document.body.insertBefore(tooltipContainer[0], document.body.childNodes[0]);
+          addTranscludedContent();
           positionTooltip();
           isVisible = true;
-          tooltipContainer[0].style.visibility = 'visible';
+          if ($scope.tsTooltipContentHover) {
+            angular.element(tooltipContainer).bind('mouseleave', function () {
+              $scope.isHoveringContent = false;
+              removeTooltip();
+            });
+            angular.element(tooltipContainer).bind('mouseenter', function () {
+              $scope.isHoveringContent = true;
+            });
+          }
         }
       }
 
       function makeInvisible() {
         if (isVisible) {
-          isVisible = false;
-          tooltipContainer[0].style.visibility = 'hidden';
+          if ($scope.tsTooltipContentHover) {
+            $timeout(function () {
+              if ($scope.isHoveringContent) return;else {
+                removeTooltip();
+              }
+            }, 250);
+          } else {
+            removeTooltip();
+          }
         }
       }
 
+      function removeTooltip() {
+        isVisible = false;
+        tooltipContainer.remove();
+      }
+
       function toggleVisibility() {
-        if (isVisible) {
-          makeInvisible();
-        } else {
-          makeVisible();
-        }
+        isVisible ? makeInvisible() : makeVisible();
       }
 
       if ($attr.tsTooltipShow === undefined) {
@@ -243,7 +269,7 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $com
       //Clean up the tooltip and destroy the scope for the transcluded element
       $scope.$on('$destroy', function () {
         if ($scope.tooltipScope) $scope.tooltipScope.$destroy();
-        newTooltip.remove();
+        arrowBoxContainer.remove();
       });
     }
   };
@@ -399,6 +425,18 @@ angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig
     return focusConfig;
   };
 });
+'use strict';
+
+(function (module) {
+  try {
+    module = angular.module('ts.utils');
+  } catch (e) {
+    module = angular.module('ts.utils', []);
+  }
+  module.run(['$templateCache', function ($templateCache) {
+    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main">\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>\n' + '');
+  }]);
+})();
 /**
  * ts-dropwdown - Shows a drop down list of items that can be selected from.
  *
@@ -477,7 +515,7 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
               toggleDropDown();
             } else {
               // otherwise if the list is open move up in the highlights.
-              $scope.$apply($scope.direction == 'down' ? moveHighlightUp : moveHighlightDown);
+              $scope.$apply(moveHighlightUp);
             }
             event.preventDefault();
             break;
@@ -489,7 +527,7 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
             if (!$scope.dropDownOpen) {
               toggleDropDown();
             } else {
-              $scope.$apply($scope.direction == 'down' ? moveHighlightDown : moveHighlightUp);
+              $scope.$apply(moveHighlightDown);
             }
             event.preventDefault();
             break;
@@ -643,18 +681,6 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
     }
   };
 });
-'use strict';
-
-(function (module) {
-  try {
-    module = angular.module('ts.utils');
-  } catch (e) {
-    module = angular.module('ts.utils', []);
-  }
-  module.run(['$templateCache', function ($templateCache) {
-    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main">\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>');
-  }]);
-})();
 /**
  * autoGrow - Increases height of textarea while typing
  *

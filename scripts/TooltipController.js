@@ -1,9 +1,12 @@
 angular.module('testApp')
 
-.controller('TooltipController', function(){
+.controller('TooltipController', function() {
   this.bar = 'mars';
   
-  this.stringFunction = function(){
+  this.stringFunction = function() {
     return 'I am a string from a function call';
+  }
+  this.testing = function() {
+    alert('just testing');
   }
 });
