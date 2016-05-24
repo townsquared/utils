@@ -59,6 +59,7 @@ angular.module('ts.utils')
         // separated from having their width restricted by their parent element or having a static width and since the
         // total size of the tooltip is needed to compute the offset for it's top left corner we must watch the height.
         $scope.$watch(function(){return arrowBoxContainer.clientHeight}, positionTooltip);
+        $scope.$watch(function(){return arrowBoxContainer.clientWidth}, positionTooltip);
 
         // This is where we add the transcluded content will get placed it is one of the children of the container
         $scope.tooltipMain = tooltipContainer.find("#tooltipMain");

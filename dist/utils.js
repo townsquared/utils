@@ -127,6 +127,9 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
       $scope.$watch(function () {
         return arrowBoxContainer.clientHeight;
       }, positionTooltip);
+      $scope.$watch(function () {
+        return arrowBoxContainer.clientWidth;
+      }, positionTooltip);
 
       // This is where we add the transcluded content will get placed it is one of the children of the container
       $scope.tooltipMain = tooltipContainer.find("#tooltipMain");
@@ -425,18 +428,6 @@ angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig
     return focusConfig;
   };
 });
-'use strict';
-
-(function (module) {
-  try {
-    module = angular.module('ts.utils');
-  } catch (e) {
-    module = angular.module('ts.utils', []);
-  }
-  module.run(['$templateCache', function ($templateCache) {
-    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main">\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>\n' + '');
-  }]);
-})();
 /**
  * ts-dropwdown - Shows a drop down list of items that can be selected from.
  *
@@ -681,6 +672,18 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
     }
   };
 });
+'use strict';
+
+(function (module) {
+  try {
+    module = angular.module('ts.utils');
+  } catch (e) {
+    module = angular.module('ts.utils', []);
+  }
+  module.run(['$templateCache', function ($templateCache) {
+    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main">\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>\n' + '');
+  }]);
+})();
 /**
  * autoGrow - Increases height of textarea while typing
  *
