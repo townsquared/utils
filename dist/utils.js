@@ -127,9 +127,9 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
       $scope.$watch(function () {
         return arrowBoxContainer.clientHeight;
       }, positionTooltip);
-      $scope.$watch(function () {
-        return arrowBoxContainer.clientWidth;
-      }, positionTooltip);
+
+      //We need a good workaround for if the contents width changes to adjust to fix the position, less $watchers is ideal
+      // $scope.$watch(function(){return arrowBoxContainer.clientWidth}, positionTooltip);
 
       // This is where we add the transcluded content will get placed it is one of the children of the container
       $scope.tooltipMain = tooltipContainer.find("#tooltipMain");
