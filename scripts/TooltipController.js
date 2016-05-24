@@ -1,12 +1,17 @@
 angular.module('testApp')
 
-.controller('TooltipController', function() {
-  this.bar = 'mars';
+.controller('TooltipController', function($timeout) {
+  var ctrl = this;
+  ctrl.bar = 'mars';
+  ctrl.thing = 'something';
   
-  this.stringFunction = function() {
+  ctrl.stringFunction = function() {
     return 'I am a string from a function call';
   }
-  this.testing = function() {
-    alert('just testing');
+  ctrl.testing = function() {
+
+    $timeout(function(){
+      ctrl.thing = "something else"
+    }, 1000)
   }
 });
