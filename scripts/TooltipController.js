@@ -12,6 +12,6 @@ angular.module('testApp')
 
     $timeout(function(){
       ctrl.thing = "something else"
-    }, 1000)
+    }, 5000)
   }
 });
