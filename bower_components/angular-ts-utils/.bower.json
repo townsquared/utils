@@ -23,13 +23,13 @@
     "tests"
   ],
   "dependencies": {},
-  "_release": "6ad0c94a5e",
+  "_release": "63d523c50d",
   "_resolution": {
     "type": "branch",
-    "branch": "recompile-on-visible",
-    "commit": "6ad0c94a5ef6b6ffbcdc4cc0c84e4b2d1e34680b"
+    "branch": "add-bool-switch-to-drop-down",
+    "commit": "63d523c50db931df504044dde3232e16bb429a8d"
   },
   "_source": "https://github.com/townsquared/utils.git",
-  "_target": "recompile-on-visible",
+  "_target": "add-bool-switch-to-drop-down",
   "_originalSource": "https://github.com/townsquared/utils.git"
 }

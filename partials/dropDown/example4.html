@@ -1,0 +1,16 @@
+<div  ts-drop-down="dropDownCtrl.quickList"
+      ts-drop-down-width="300"
+      ts-drop-down-show="dropDownCtrl.someBool"
+      ts-item-click="dropDownCtrl.takeAction(item)"
+      ng-model="dropDownCtrl.someOtherModel">
+  <ts-placeholder></ts-placeholder>
+  <ts-list-item>
+    <div>
+      {{item}}
+    </div>
+  </ts-list-item>
+</div>
+<label>
+  <input type="checkbox" ng-model="dropDownCtrl.someBool"/>
+  Some boolean
+</label>
