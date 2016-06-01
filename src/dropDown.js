@@ -11,7 +11,7 @@
 'use strict';
 angular.module('ts.utils')
 
-  .directive('tsDropDown', function($templateCache, $compile) {
+  .directive('tsDropDown', function($templateCache, $compile, $timeout) {
 
     return {
       restrict:'A',
@@ -41,7 +41,8 @@ angular.module('ts.utils')
             ae = angular.element, //shorthand
             placeholderElement,
             placeholderScope,
-            selectedItem;
+            selectedItem,
+            setHeight = false;
 
         //Makes the element focusable with the keyboard
         $element.attr('tabindex','0');
@@ -142,7 +143,7 @@ angular.module('ts.utils')
 
                   }
 
-                  compiledListItem[0].style.width=(scope.tsDropDownWidth||(textDisplayElement[0].offsetWidth))+'px';
+                  compiledListItem[0].style.width = (scope.tsDropDownWidth || textDisplayElement[0].offsetWidth + dropDownArrow[0].offsetWidth) + 'px';
 
                   dropDownUnorderedList.append(compiledListItem);
                 });
@@ -195,7 +196,7 @@ angular.module('ts.utils')
             $scope.direction = 'down';
           }
 
-          
+
           if(forceState === true || forceState === false) {
             $scope.dropDownOpen = forceState;
           }
@@ -203,6 +204,19 @@ angular.module('ts.utils')
             $scope.dropDownOpen = !$scope.dropDownOpen;
             $scope.tsDropDownShow = $scope.dropDownOpen;
           }
+          if(setHeight)
+            return;
+
+          $timeout( () => {
+            setHeight = true;
+            var dropdownHeight;
+            var listHeight = dropDownUnorderedList.outerHeight() + 2;
+            if(listHeight > (window.innerHeight * .33) )
+              dropdownHeight = window.innerHeight*.33;
+            else
+              dropdownHeight = listHeight
+            dropDownListContainer[0].style.height = dropdownHeight + 'px';
+          }, 0);
         }
 
         textDisplayElement.on('click', function(){
@@ -214,7 +228,7 @@ angular.module('ts.utils')
 
 
         $scope.$watch('tsDropDownShow',function(newVal, oldVal) {
-          if(newVal !== undefined) 
+          if(newVal !== undefined)
             toggleDropDown(newVal);
         })
 
