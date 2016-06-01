@@ -23,6 +23,7 @@ angular.module('ts.utils')
       scope:{
         tsDropDownTemplate:'@',
         tsDropDown: '=',
+        tsDropDownShow:'=',
         tsDropDownWidth: '=',
         tsItemClick: '&'
       },
@@ -177,7 +178,7 @@ angular.module('ts.utils')
         // Take the height of the window divided by 2 to get the middle of the window
         // if the element's middle is lower than the middle of the window then open upward
         // otherwise open downward
-        function toggleDropDown(){
+        function toggleDropDown(forceState){
           var rect = $element[0].getBoundingClientRect();
           var middleOfWindow = window.innerHeight/2;
           var middleOfElement = rect.top+rect.height/2;
@@ -194,7 +195,14 @@ angular.module('ts.utils')
             $scope.direction = 'down';
           }
 
-          $scope.dropDownOpen = !$scope.dropDownOpen;
+          
+          if(forceState === true || forceState === false) {
+            $scope.dropDownOpen = forceState;
+          }
+          else{
+            $scope.dropDownOpen = !$scope.dropDownOpen;
+            $scope.tsDropDownShow = $scope.dropDownOpen;
+          }
         }
 
         textDisplayElement.on('click', function(){
@@ -203,6 +211,12 @@ angular.module('ts.utils')
         dropDownArrow.on('click', function(){
           $scope.$apply(toggleDropDown)
         });
+
+
+        $scope.$watch('tsDropDownShow',function(newVal, oldVal) {
+          if(newVal !== undefined) 
+            toggleDropDown(newVal);
+        })
 
         if (!ngModelCtrl) return; // do nothing if no ng-model
 
