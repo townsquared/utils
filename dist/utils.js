@@ -428,6 +428,18 @@ angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig
     return focusConfig;
   };
 });
+'use strict';
+
+(function (module) {
+  try {
+    module = angular.module('ts.utils');
+  } catch (e) {
+    module = angular.module('ts.utils', []);
+  }
+  module.run(['$templateCache', function ($templateCache) {
+    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main">\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>\n' + '');
+  }]);
+})();
 /**
  * ts-dropwdown - Shows a drop down list of items that can be selected from.
  *
@@ -439,7 +451,7 @@ angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig
  */
 
 'use strict';
-angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $compile) {
+angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $compile, $timeout) {
 
   return {
     restrict: 'A',
@@ -451,6 +463,7 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
     scope: {
       tsDropDownTemplate: '@',
       tsDropDown: '=',
+      tsDropDownShow: '=',
       tsDropDownWidth: '=',
       tsItemClick: '&'
     },
@@ -469,7 +482,8 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
           //shorthand
       placeholderElement = undefined,
           placeholderScope = undefined,
-          selectedItem = undefined;
+          selectedItem = undefined,
+          setHeight = false;
 
       //Makes the element focusable with the keyboard
       $element.attr('tabindex', '0');
@@ -568,7 +582,7 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
                   });
                 }
 
-                compiledListItem[0].style.width = (scope.tsDropDownWidth || textDisplayElement[0].offsetWidth) + 'px';
+                compiledListItem[0].style.width = (scope.tsDropDownWidth || textDisplayElement[0].offsetWidth + dropDownArrow[0].offsetWidth) + 'px';
 
                 dropDownUnorderedList.append(compiledListItem);
               });
@@ -601,7 +615,7 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
       // Take the height of the window divided by 2 to get the middle of the window
       // if the element's middle is lower than the middle of the window then open upward
       // otherwise open downward
-      function toggleDropDown() {
+      function toggleDropDown(forceState) {
         var rect = $element[0].getBoundingClientRect();
         var middleOfWindow = window.innerHeight / 2;
         var middleOfElement = rect.top + rect.height / 2;
@@ -617,7 +631,21 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
           $scope.direction = 'down';
         }
 
-        $scope.dropDownOpen = !$scope.dropDownOpen;
+        if (forceState === true || forceState === false) {
+          $scope.dropDownOpen = forceState;
+        } else {
+          $scope.dropDownOpen = !$scope.dropDownOpen;
+          $scope.tsDropDownShow = $scope.dropDownOpen;
+        }
+        if (setHeight) return;
+
+        $timeout(function () {
+          setHeight = true;
+          var dropdownHeight;
+          var listHeight = dropDownUnorderedList.outerHeight() + 2;
+          if (listHeight > window.innerHeight * .33) dropdownHeight = window.innerHeight * .33;else dropdownHeight = listHeight;
+          dropDownListContainer[0].style.height = dropdownHeight + 'px';
+        }, 0);
       }
 
       textDisplayElement.on('click', function () {
@@ -625,6 +653,10 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
       });
       dropDownArrow.on('click', function () {
         $scope.$apply(toggleDropDown);
+      });
+
+      $scope.$watch('tsDropDownShow', function (newVal, oldVal) {
+        if (newVal !== undefined) toggleDropDown(newVal);
       });
 
       if (!ngModelCtrl) return; // do nothing if no ng-model
@@ -681,7 +713,7 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
     module = angular.module('ts.utils', []);
   }
   module.run(['$templateCache', function ($templateCache) {
-    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main">\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>\n' + '');
+    $templateCache.put('templates/tsDropDown.html', '<div class="drop-down-container">\n' + '  <div class="selected-item-container">\n' + '  </div><div class="arrow-container" ng-class="{\'arrow-default\':!dropDownOpen, \'arrow-open\':dropDownOpen}">\n' + '  </div>\n' + '  <div ng-show="dropDownOpen"\n' + '       class="drop-down-list-container">\n' + '    <ul>\n' + '    </ul>\n' + '  </div>\n' + '</div>');
   }]);
 })();
 /**
@@ -707,16 +739,4 @@ angular.module('ts.utils').directive('autoGrow', function ($timeout) {
     }
   };
 });
-'use strict';
-
-(function (module) {
-  try {
-    module = angular.module('ts.utils');
-  } catch (e) {
-    module = angular.module('ts.utils', []);
-  }
-  module.run(['$templateCache', function ($templateCache) {
-    $templateCache.put('templates/tsDropDown.html', '<div class="drop-down-container">\n' + '  <div class="selected-item-container">\n' + '  </div><div class="arrow-container" ng-class="{\'arrow-default\':!dropDownOpen, \'arrow-open\':dropDownOpen}">\n' + '  </div>\n' + '  <div ng-show="dropDownOpen"\n' + '       class="drop-down-list-container">\n' + '    <ul>\n' + '    </ul>\n' + '  </div>\n' + '</div>');
-  }]);
-})();
 //# sourceMappingURL=utils.js.map
