@@ -451,7 +451,7 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
     scope: {
       tsDropDownTemplate: '@',
       tsDropDown: '=',
-      tsDropDownShow: '=',
+      tsDropDownShow: '=?',
       tsDropDownWidth: '=',
       tsItemClick: '&'
     },

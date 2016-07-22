@@ -23,7 +23,7 @@ angular.module('ts.utils')
       scope:{
         tsDropDownTemplate:'@',
         tsDropDown: '=',
-        tsDropDownShow:'=',
+        tsDropDownShow:'=?',
         tsDropDownWidth: '=',
         tsItemClick: '&'
       },
