@@ -49,10 +49,10 @@ angular.module('ts.utils')
         var isVisible = false;
 
         //Compile the container for the bindings on the CSS and text tooltip contents
-        var tooltipContainer = $compile(template)($scope);      
+        var tooltipContainer = $compile(template)($scope);
 
         //First DOM element child of the container, this is used for the position computations
-        var arrowBoxContainer = tooltipContainer.children()[0]; 
+        var arrowBoxContainer = tooltipContainer.children()[0];
 
         // Fix the position of the tooltip if the height of the tooltip itself changes.  This is necessary for dynamic
         // content when absolutely positioning the tooltips.  Tooltips must be absolutely positioned in order to be
@@ -211,7 +211,7 @@ angular.module('ts.utils')
         $scope.$on('$destroy',function() {
           if($scope.tooltipScope)
             $scope.tooltipScope.$destroy();
-          arrowBoxContainer.remove();
+          angular.element(arrowBoxContainer).remove();
         });
       }
     };

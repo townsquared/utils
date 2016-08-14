@@ -272,7 +272,7 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
       //Clean up the tooltip and destroy the scope for the transcluded element
       $scope.$on('$destroy', function () {
         if ($scope.tooltipScope) $scope.tooltipScope.$destroy();
-        arrowBoxContainer.remove();
+        angular.element(arrowBoxContainer).remove();
       });
     }
   };
