@@ -194,6 +194,11 @@ angular.module('ts.utils')
             case 'click':
               $element.on('click', toggleVisibility);
               break;
+            case 'hybrid':
+              $element.on('mouseenter', makeVisible);
+              $element.on('mouseleave', makeInvisible);
+              $element.on('click', toggleVisibility);
+              break;
           }
         }
         else{
