@@ -81,7 +81,8 @@ angular.module('ts.utils')
               }
 
               $('body').animate({ scrollTop: offset }, {
-                speed: speed,
+                duration: speed,
+                easing: 'linear',
                 complete: function complete() {
                   // Focus element (if input)
                   $element[0].focus();
