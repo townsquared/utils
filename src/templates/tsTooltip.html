@@ -1,6 +1,9 @@
 <div class="ts-tooltip-container {{::tsTooltipClass}}">
   <div class="arrow-box-container">
-    <div id="tooltipMain" class="ts-tooltip-main">
+    <div id="tooltipMain" class="ts-tooltip-main" ng-class="{'ts-tooltip-close': tsTooltipShowClose}">
+      <div class="close" ng-show="tsTooltipShowClose">
+  	    <a href="#" ng-click="close()"><small><i class="icon-close icon" aria-hidden="true"></i></small></a>
+  	  </div>
       {{tsTooltip}}
     </div>
   </div>

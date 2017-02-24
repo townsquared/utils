@@ -6,13 +6,16 @@
  * @example
  *
  *<button
- *        ts-tooltip-event="click"                              // Options are click or mouseover
  *        ts-tooltip="Something that shows up in there"         // The text to show in the tooltip
  *        ts-tooltip-direction="bottom"                         // The direction the tooltip pops up
+ *        ts-tooltip-event="click"                              // Options are click or mouseover
  *        ts-tooltip-show="someModel.someBoolean"               // A boolean if set will use this instead of events
+ *        ts-tooltip-id="String"                                // A string used to identify the tooltip
  *        ts-tooltip-class="someClass"                          // Adds class to tooltip container
  *        ts-tooltip-content-hover="someModel.someBoolean"      // A boolean if set will allow users to
- *                                                              // hover over the tooltip content without closing it
+ *        ts-tooltip-show-close="someModel.someBoolean"         // A boolean to show close button
+ *        ts-tooltip-close-callback="someFunction"              // Event Handler when closed is clicked
+ *        ts-tooltip-margin="Integer"                           // Integer value to provide margin between tooltip and element
  *        >
  *   Bottom Click Me
  * </button>
@@ -32,10 +35,15 @@ angular.module('ts.utils')
         tsTooltipDirection:'@',
         tsTooltipEvent:'@',
         tsTooltipShow:'=',
+        tsTooltipId: '@',
         tsTooltipClass: '@',
-        tsTooltipContentHover: '@'
+        tsTooltipContentHover: '@',
+        tsTooltipShowClose: '@',
+        tsTooltipCloseCallback: '&',
+        tsTooltipMargin: '@'
       },
       controller: function($scope){
+        $scope.tsTooltipMargin = $scope.tsTooltipMargin ? $scope.tsTooltipMargin : 0;
         this.setTranscluded = function(transclude){
           $scope.transcludedContentFn = transclude;
         }
@@ -67,6 +75,12 @@ angular.module('ts.utils')
         $scope.tooltipMain = tooltipContainer.find("#tooltipMain");
         $scope.tooltipMain.addClass(direction);
 
+        // Close Tooltip
+        $scope.close = function () {
+          removeTooltip();
+          // Callback function
+          if ($scope.tsTooltipCloseCallback) $scope.tsTooltipCloseCallback({id: $scope.tsTooltipId});
+        };
 
         function addTranscludedContent(){
           if($scope.transcludedContentFn){
@@ -105,8 +119,9 @@ angular.module('ts.utils')
         function positionTooltip(){
           if(!origOffset)
             origOffset = offset(arrowBoxContainer);
+          var element = $element.children().length == 1 ? $element.children() : $element;
+          let elementOffset = offset(element[0]);
 
-          let elementOffset = offset($element[0]);
           if(elementOffset === undefined || origOffset == undefined) {
             return;
           }
@@ -117,27 +132,27 @@ angular.module('ts.utils')
           switch(direction){
             case 'right':
             case 'left':
-              arrowBoxContainer.style.top = (topCommon + $element[0].offsetHeight - $scope.tooltipMain[0].offsetHeight/2 - ARROW_SIZE) + 'px';
+              arrowBoxContainer.style.top = topCommon + element[0].offsetHeight - $scope.tooltipMain[0].offsetHeight / 2 - element.outerHeight() / 2 + 'px';
               break;
             case 'top':
             case 'bottom':
-              arrowBoxContainer.style.left = leftCommon + $element[0].offsetWidth/2 - $scope.tooltipMain[0].offsetWidth/2 + 'px';
+              arrowBoxContainer.style.left = leftCommon + element[0].offsetWidth / 2 - $scope.tooltipMain[0].offsetWidth / 2 + 'px';
               break;
           }
 
           //Sets the specific left or top values for each direction
           switch(direction) {
             case 'right':
-              arrowBoxContainer.style.left = leftCommon + $element[0].offsetWidth+ARROW_SIZE + 'px';
+              arrowBoxContainer.style.left = (leftCommon + element[0].offsetWidth + ARROW_SIZE + parseInt($scope.tsTooltipMargin)) + 'px';
               break;
             case 'left':
-              arrowBoxContainer.style.left = (leftCommon-$scope.tooltipMain[0].offsetWidth - ARROW_SIZE ) + 'px';
+              arrowBoxContainer.style.left = (leftCommon - $scope.tooltipMain[0].offsetWidth - ARROW_SIZE - parseInt($scope.tsTooltipMargin)) + 'px';
               break;
             case 'top':
-              arrowBoxContainer.style.top = topCommon - $scope.tooltipMain[0].offsetHeight - ARROW_SIZE + 'px';
+              arrowBoxContainer.style.top = (topCommon - $scope.tooltipMain[0].offsetHeight - ARROW_SIZE - parseInt($scope.tsTooltipMargin)) + 'px';
               break;
             case 'bottom':
-              arrowBoxContainer.style.top = topCommon + $element[0].offsetHeight + ARROW_SIZE + 'px';
+              arrowBoxContainer.style.top = (topCommon + element[0].offsetHeight + ARROW_SIZE + parseInt($scope.tsTooltipMargin)) + 'px';
               break;
           }
         }
@@ -204,7 +219,8 @@ angular.module('ts.utils')
         else{
           $scope.$watch('tsTooltipShow',function(newVal, oldVal) {
             if(newVal) {
-              makeVisible();
+              // 250ms is an estimate to wait for the render of elements using ng-ifs 
+              $timeout(() => makeVisible(), 250);
             }
             else {
               makeInvisible();

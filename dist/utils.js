@@ -74,13 +74,16 @@ angular.module('ts.utils').filter('tsTruncate', function () {
  * @example
  *
  *<button
- *        ts-tooltip-event="click"                              // Options are click or mouseover
  *        ts-tooltip="Something that shows up in there"         // The text to show in the tooltip
  *        ts-tooltip-direction="bottom"                         // The direction the tooltip pops up
+ *        ts-tooltip-event="click"                              // Options are click or mouseover
  *        ts-tooltip-show="someModel.someBoolean"               // A boolean if set will use this instead of events
+ *        ts-tooltip-id="String"                                // A string used to identify the tooltip
  *        ts-tooltip-class="someClass"                          // Adds class to tooltip container
  *        ts-tooltip-content-hover="someModel.someBoolean"      // A boolean if set will allow users to
- *                                                              // hover over the tooltip content without closing it
+ *        ts-tooltip-show-close="someModel.someBoolean"         // A boolean to show close button
+ *        ts-tooltip-close-callback="someFunction"              // Event Handler when closed is clicked
+ *        ts-tooltip-margin="Integer"                           // Integer value to provide margin between tooltip and element
  *        >
  *   Bottom Click Me
  * </button>
@@ -98,10 +101,15 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
       tsTooltipDirection: '@',
       tsTooltipEvent: '@',
       tsTooltipShow: '=',
+      tsTooltipId: '@',
       tsTooltipClass: '@',
-      tsTooltipContentHover: '@'
+      tsTooltipContentHover: '@',
+      tsTooltipShowClose: '@',
+      tsTooltipCloseCallback: '&',
+      tsTooltipMargin: '@'
     },
     controller: function controller($scope) {
+      $scope.tsTooltipMargin = $scope.tsTooltipMargin ? $scope.tsTooltipMargin : 0;
       this.setTranscluded = function (transclude) {
         $scope.transcludedContentFn = transclude;
       };
@@ -134,6 +142,13 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
       // This is where we add the transcluded content will get placed it is one of the children of the container
       $scope.tooltipMain = tooltipContainer.find("#tooltipMain");
       $scope.tooltipMain.addClass(direction);
+
+      // Close Tooltip
+      $scope.close = function () {
+        removeTooltip();
+        // Callback function
+        if ($scope.tsTooltipCloseCallback) $scope.tsTooltipCloseCallback({ id: $scope.tsTooltipId });
+      };
 
       function addTranscludedContent() {
         if ($scope.transcludedContentFn) {
@@ -171,8 +186,9 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
 
       function positionTooltip() {
         if (!origOffset) origOffset = offset(arrowBoxContainer);
+        var element = $element.children().length == 1 ? $element.children() : $element;
+        var elementOffset = offset(element[0]);
 
-        var elementOffset = offset($element[0]);
         if (elementOffset === undefined || origOffset == undefined) {
           return;
         }
@@ -183,27 +199,27 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
         switch (direction) {
           case 'right':
           case 'left':
-            arrowBoxContainer.style.top = topCommon + $element[0].offsetHeight - $scope.tooltipMain[0].offsetHeight / 2 - ARROW_SIZE + 'px';
+            arrowBoxContainer.style.top = topCommon + element[0].offsetHeight - $scope.tooltipMain[0].offsetHeight / 2 - element.outerHeight() / 2 + 'px';
             break;
           case 'top':
           case 'bottom':
-            arrowBoxContainer.style.left = leftCommon + $element[0].offsetWidth / 2 - $scope.tooltipMain[0].offsetWidth / 2 + 'px';
+            arrowBoxContainer.style.left = leftCommon + element[0].offsetWidth / 2 - $scope.tooltipMain[0].offsetWidth / 2 + 'px';
             break;
         }
 
         //Sets the specific left or top values for each direction
         switch (direction) {
           case 'right':
-            arrowBoxContainer.style.left = leftCommon + $element[0].offsetWidth + ARROW_SIZE + 'px';
+            arrowBoxContainer.style.left = leftCommon + element[0].offsetWidth + ARROW_SIZE + parseInt($scope.tsTooltipMargin) + 'px';
             break;
           case 'left':
-            arrowBoxContainer.style.left = leftCommon - $scope.tooltipMain[0].offsetWidth - ARROW_SIZE + 'px';
+            arrowBoxContainer.style.left = leftCommon - $scope.tooltipMain[0].offsetWidth - ARROW_SIZE - parseInt($scope.tsTooltipMargin) + 'px';
             break;
           case 'top':
-            arrowBoxContainer.style.top = topCommon - $scope.tooltipMain[0].offsetHeight - ARROW_SIZE + 'px';
+            arrowBoxContainer.style.top = topCommon - $scope.tooltipMain[0].offsetHeight - ARROW_SIZE - parseInt($scope.tsTooltipMargin) + 'px';
             break;
           case 'bottom':
-            arrowBoxContainer.style.top = topCommon + $element[0].offsetHeight + ARROW_SIZE + 'px';
+            arrowBoxContainer.style.top = topCommon + element[0].offsetHeight + ARROW_SIZE + parseInt($scope.tsTooltipMargin) + 'px';
             break;
         }
       }
@@ -267,7 +283,10 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
       } else {
         $scope.$watch('tsTooltipShow', function (newVal, oldVal) {
           if (newVal) {
-            makeVisible();
+            // 250ms is an estimate to wait for the render of elements using ng-ifs
+            $timeout(function () {
+              return makeVisible();
+            }, 250);
           } else {
             makeInvisible();
           }
@@ -433,18 +452,6 @@ angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig
     return focusConfig;
   };
 });
-'use strict';
-
-(function (module) {
-  try {
-    module = angular.module('ts.utils');
-  } catch (e) {
-    module = angular.module('ts.utils', []);
-  }
-  module.run(['$templateCache', function ($templateCache) {
-    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main">\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>\n' + '');
-  }]);
-})();
 /**
  * ts-dropwdown - Shows a drop down list of items that can be selected from.
  *
@@ -718,7 +725,7 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
     module = angular.module('ts.utils', []);
   }
   module.run(['$templateCache', function ($templateCache) {
-    $templateCache.put('templates/tsDropDown.html', '<div class="drop-down-container">\n' + '  <div class="selected-item-container">\n' + '  </div><div class="arrow-container" ng-class="{\'arrow-default\':!dropDownOpen, \'arrow-open\':dropDownOpen}">\n' + '  </div>\n' + '  <div ng-show="dropDownOpen"\n' + '       class="drop-down-list-container">\n' + '    <ul>\n' + '    </ul>\n' + '  </div>\n' + '</div>');
+    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main" ng-class="{\'ts-tooltip-close\': tsTooltipShowClose}">\n' + '      <div class="close" ng-show="tsTooltipShowClose">\n' + '  	    <a href="#" ng-click="close()"><small><i class="icon-close icon" aria-hidden="true"></i></small></a>\n' + '  	  </div>\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>\n' + '');
   }]);
 })();
 /**
@@ -744,4 +751,16 @@ angular.module('ts.utils').directive('autoGrow', function ($timeout) {
     }
   };
 });
+'use strict';
+
+(function (module) {
+  try {
+    module = angular.module('ts.utils');
+  } catch (e) {
+    module = angular.module('ts.utils', []);
+  }
+  module.run(['$templateCache', function ($templateCache) {
+    $templateCache.put('templates/tsDropDown.html', '<div class="drop-down-container">\n' + '  <div class="selected-item-container">\n' + '  </div><div class="arrow-container" ng-class="{\'arrow-default\':!dropDownOpen, \'arrow-open\':dropDownOpen}">\n' + '  </div>\n' + '  <div ng-show="dropDownOpen"\n' + '       class="drop-down-list-container">\n' + '    <ul>\n' + '    </ul>\n' + '  </div>\n' + '</div>');
+  }]);
+})();
 //# sourceMappingURL=utils.js.map
