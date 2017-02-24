@@ -45,6 +45,15 @@ $tooltip-radius: 4px;
     padding: $tooltip-padding;
     max-width:300px;
 
+    .close {
+      position: absolute;
+      top: 0.5625rem;
+      right: 0.5625rem;
+      i {
+        line-height: 1.6rem;
+      }
+    }
+
     /* Left */
     &.right{
       &:after, &:before{
@@ -122,4 +131,7 @@ $tooltip-radius: 4px;
     }
   }
 
+  .ts-tooltip-close {
+    padding-right: 1.875rem !important;
+  }
 }

@@ -14,6 +14,12 @@
     /* Right */
     /* Bottom */
     /* Top */ }
+    .ts-tooltip-container .ts-tooltip-main .close {
+      position: absolute;
+      top: 0.5625rem;
+      right: 0.5625rem; }
+      .ts-tooltip-container .ts-tooltip-main .close i {
+        line-height: 1.6rem; }
     .ts-tooltip-container .ts-tooltip-main.right:after, .ts-tooltip-container .ts-tooltip-main.right:before {
       right: 100%;
       top: 50%;
@@ -90,6 +96,8 @@
       border-width: 11px;
       margin-left: -11px;
       border-top-color: #cccccc; }
+  .ts-tooltip-container .ts-tooltip-close {
+    padding-right: 1.875rem !important; }
 
 [ts-drop-down] {
   outline: none; }

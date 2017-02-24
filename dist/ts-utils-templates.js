@@ -29,7 +29,10 @@ module.run(['$templateCache', function($templateCache) {
   $templateCache.put('templates/tsTooltip.html',
     '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' +
     '  <div class="arrow-box-container">\n' +
-    '    <div id="tooltipMain" class="ts-tooltip-main">\n' +
+    '    <div id="tooltipMain" class="ts-tooltip-main" ng-class="{\'ts-tooltip-close\': tsTooltipShowClose}">\n' +
+    '      <div class="close" ng-show="tsTooltipShowClose">\n' +
+    '        <a href="#" ng-click="close()"><small><i class="icon-close icon" aria-hidden="true"></i></small></a>\n' +
+    '      </div>\n' +
     '      {{tsTooltip}}\n' +
     '    </div>\n' +
     '  </div>\n' +
