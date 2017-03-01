@@ -83,6 +83,7 @@ angular.module('ts.utils').filter('tsTruncate', function () {
  *        ts-tooltip-content-hover="someModel.someBoolean"      // A boolean if set will allow users to
  *        ts-tooltip-show-close="someModel.someBoolean"         // A boolean to show close button
  *        ts-tooltip-close-callback="someFunction"              // Event Handler when closed is clicked
+ *        ts-tooltip-track="someClass"                          // Tracks height and update if changed
  *        ts-tooltip-margin="Integer"                           // Integer value to provide margin between tooltip and element
  *        >
  *   Bottom Click Me
@@ -106,6 +107,7 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
       tsTooltipContentHover: '@',
       tsTooltipShowClose: '@',
       tsTooltipCloseCallback: '&',
+      tsTooltipTrack: '@',
       tsTooltipMargin: '@'
     },
     controller: function controller($scope) {
@@ -140,15 +142,8 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
       // $scope.$watch(function(){return arrowBoxContainer.clientWidth}, positionTooltip);
 
       // This is where we add the transcluded content will get placed it is one of the children of the container
-      $scope.tooltipMain = tooltipContainer.find("#tooltipMain");
+      $scope.tooltipMain = tooltipContainer.find('#tooltipMain');
       $scope.tooltipMain.addClass(direction);
-
-      // Close Tooltip
-      $scope.close = function () {
-        removeTooltip();
-        // Callback function
-        if ($scope.tsTooltipCloseCallback) $scope.tsTooltipCloseCallback({ id: $scope.tsTooltipId });
-      };
 
       function addTranscludedContent() {
         if ($scope.transcludedContentFn) {
@@ -179,7 +174,8 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
 
           return {
             top: rect.top + win.pageYOffset - docElem.clientTop,
-            left: rect.left + win.pageXOffset - docElem.clientLeft
+            left: rect.left + win.pageXOffset - docElem.clientLeft,
+            right: docElem.clientWidth - rect.left
           };
         }
       }
@@ -213,7 +209,7 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
             arrowBoxContainer.style.left = leftCommon + element[0].offsetWidth + ARROW_SIZE + parseInt($scope.tsTooltipMargin) + 'px';
             break;
           case 'left':
-            arrowBoxContainer.style.left = leftCommon - $scope.tooltipMain[0].offsetWidth - ARROW_SIZE - parseInt($scope.tsTooltipMargin) + 'px';
+            arrowBoxContainer.style.right = elementOffset.right + ARROW_SIZE + parseInt($scope.tsTooltipMargin) + 'px';
             break;
           case 'top':
             arrowBoxContainer.style.top = topCommon - $scope.tooltipMain[0].offsetHeight - ARROW_SIZE - parseInt($scope.tsTooltipMargin) + 'px';
@@ -231,12 +227,17 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
           positionTooltip();
           isVisible = true;
           if ($scope.tsTooltipContentHover) {
-            angular.element(tooltipContainer).bind('mouseleave', function () {
+            angular.element(tooltipContainer).on('mouseleave', function () {
               $scope.isHoveringContent = false;
               removeTooltip();
             });
-            angular.element(tooltipContainer).bind('mouseenter', function () {
+            angular.element(tooltipContainer).on('mouseenter', function () {
               $scope.isHoveringContent = true;
+            });
+          } else {
+            angular.element(tooltipContainer.find('.close')).on('click', function () {
+              removeTooltip();
+              if ($scope.tsTooltipCloseCallback) $scope.tsTooltipCloseCallback({ id: $scope.tsTooltipId });
             });
           }
         }
@@ -281,6 +282,16 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
             break;
         }
       } else {
+        angular.element($window).on('resize', positionTooltip);
+
+        if ($scope.tsTooltipTrack) {
+          $scope.$watch(function () {
+            return $($scope.tsTooltipTrack).height();
+          }, function (newValue, oldValue) {
+            if (newValue != oldValue) positionTooltip();
+          });
+        }
+
         $scope.$watch('tsTooltipShow', function (newVal, oldVal) {
           if (newVal) {
             // 250ms is an estimate to wait for the render of elements using ng-ifs
@@ -297,6 +308,7 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
       $scope.$on('$destroy', function () {
         if ($scope.tooltipScope) $scope.tooltipScope.$destroy();
         angular.element(arrowBoxContainer).remove();
+        angular.element($window).off('resize', positionTooltip);
       });
     }
   };
@@ -452,6 +464,18 @@ angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig
     return focusConfig;
   };
 });
+'use strict';
+
+(function (module) {
+  try {
+    module = angular.module('ts.utils');
+  } catch (e) {
+    module = angular.module('ts.utils', []);
+  }
+  module.run(['$templateCache', function ($templateCache) {
+    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main" ng-class="{\'ts-tooltip-close\': tsTooltipShowClose}">\n' + '      <div class="close" ng-show="tsTooltipShowClose">\n' + '  	    <a href="#" ng-click="close()"><small><i class="icon-close icon" aria-hidden="true"></i></small></a>\n' + '  	  </div>\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>\n' + '');
+  }]);
+})();
 /**
  * ts-dropwdown - Shows a drop down list of items that can be selected from.
  *
@@ -716,18 +740,6 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
     }
   };
 });
-'use strict';
-
-(function (module) {
-  try {
-    module = angular.module('ts.utils');
-  } catch (e) {
-    module = angular.module('ts.utils', []);
-  }
-  module.run(['$templateCache', function ($templateCache) {
-    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main" ng-class="{\'ts-tooltip-close\': tsTooltipShowClose}">\n' + '      <div class="close" ng-show="tsTooltipShowClose">\n' + '  	    <a href="#" ng-click="close()"><small><i class="icon-close icon" aria-hidden="true"></i></small></a>\n' + '  	  </div>\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>\n' + '');
-  }]);
-})();
 /**
  * autoGrow - Increases height of textarea while typing
  *
@@ -760,7 +772,7 @@ angular.module('ts.utils').directive('autoGrow', function ($timeout) {
     module = angular.module('ts.utils', []);
   }
   module.run(['$templateCache', function ($templateCache) {
-    $templateCache.put('templates/tsDropDown.html', '<div class="drop-down-container">\n' + '  <div class="selected-item-container">\n' + '  </div><div class="arrow-container" ng-class="{\'arrow-default\':!dropDownOpen, \'arrow-open\':dropDownOpen}">\n' + '  </div>\n' + '  <div ng-show="dropDownOpen"\n' + '       class="drop-down-list-container">\n' + '    <ul>\n' + '    </ul>\n' + '  </div>\n' + '</div>');
+    $templateCache.put('templates/tsDropDown.html', '<div class="drop-down-container">\n' + '  <div class="selected-item-container"></div>\n' + '  <div class="arrow-container" ng-class="{\'arrow-default\':!dropDownOpen, \'arrow-open\':dropDownOpen}"></div>\n' + '  <div ng-show="dropDownOpen" class="drop-down-list-container">\n' + '    <ul></ul>\n' + '  </div>\n' + '</div>');
   }]);
 })();
 //# sourceMappingURL=utils.js.map

@@ -15,6 +15,7 @@
  *        ts-tooltip-content-hover="someModel.someBoolean"      // A boolean if set will allow users to
  *        ts-tooltip-show-close="someModel.someBoolean"         // A boolean to show close button
  *        ts-tooltip-close-callback="someFunction"              // Event Handler when closed is clicked
+ *        ts-tooltip-track="someClass"                          // Tracks height and update if changed
  *        ts-tooltip-margin="Integer"                           // Integer value to provide margin between tooltip and element
  *        >
  *   Bottom Click Me
@@ -40,6 +41,7 @@ angular.module('ts.utils')
         tsTooltipContentHover: '@',
         tsTooltipShowClose: '@',
         tsTooltipCloseCallback: '&',
+        tsTooltipTrack: '@',
         tsTooltipMargin: '@'
       },
       controller: function($scope){
@@ -72,15 +74,8 @@ angular.module('ts.utils')
         // $scope.$watch(function(){return arrowBoxContainer.clientWidth}, positionTooltip);
 
         // This is where we add the transcluded content will get placed it is one of the children of the container
-        $scope.tooltipMain = tooltipContainer.find("#tooltipMain");
+        $scope.tooltipMain = tooltipContainer.find('#tooltipMain');
         $scope.tooltipMain.addClass(direction);
-
-        // Close Tooltip
-        $scope.close = function () {
-          removeTooltip();
-          // Callback function
-          if ($scope.tsTooltipCloseCallback) $scope.tsTooltipCloseCallback({id: $scope.tsTooltipId});
-        };
 
         function addTranscludedContent(){
           if($scope.transcludedContentFn){
@@ -111,7 +106,8 @@ angular.module('ts.utils')
 
             return {
               top: rect.top + win.pageYOffset - docElem.clientTop,
-              left: rect.left + win.pageXOffset - docElem.clientLeft
+              left: rect.left + win.pageXOffset - docElem.clientLeft,
+              right: docElem.clientWidth - rect.left
             };
           }
         }
@@ -146,7 +142,7 @@ angular.module('ts.utils')
               arrowBoxContainer.style.left = (leftCommon + element[0].offsetWidth + ARROW_SIZE + parseInt($scope.tsTooltipMargin)) + 'px';
               break;
             case 'left':
-              arrowBoxContainer.style.left = (leftCommon - $scope.tooltipMain[0].offsetWidth - ARROW_SIZE - parseInt($scope.tsTooltipMargin)) + 'px';
+              arrowBoxContainer.style.right = (elementOffset.right + ARROW_SIZE + parseInt($scope.tsTooltipMargin)) + 'px';
               break;
             case 'top':
               arrowBoxContainer.style.top = (topCommon - $scope.tooltipMain[0].offsetHeight - ARROW_SIZE - parseInt($scope.tsTooltipMargin)) + 'px';
@@ -164,12 +160,17 @@ angular.module('ts.utils')
             positionTooltip();
             isVisible = true;
             if($scope.tsTooltipContentHover) {
-              angular.element(tooltipContainer).bind('mouseleave', function(){
+              angular.element(tooltipContainer).on('mouseleave', function(){
                 $scope.isHoveringContent = false;
                 removeTooltip();
               });
-              angular.element(tooltipContainer).bind('mouseenter', function(){
+              angular.element(tooltipContainer).on('mouseenter', function(){
                 $scope.isHoveringContent = true;
+              });
+            } else {
+              angular.element(tooltipContainer.find('.close')).on('click', function(){
+                removeTooltip();
+                if ($scope.tsTooltipCloseCallback) $scope.tsTooltipCloseCallback({id: $scope.tsTooltipId});
               });
             }
           }
@@ -217,6 +218,16 @@ angular.module('ts.utils')
           }
         }
         else{
+          angular.element($window).on('resize', positionTooltip);
+
+          if ($scope.tsTooltipTrack) {
+            $scope.$watch(() => $($scope.tsTooltipTrack).height(),
+              function (newValue, oldValue) {
+                if (newValue != oldValue) positionTooltip();
+              }
+            );
+          }
+
           $scope.$watch('tsTooltipShow',function(newVal, oldVal) {
             if(newVal) {
               // 250ms is an estimate to wait for the render of elements using ng-ifs 
@@ -233,6 +244,7 @@ angular.module('ts.utils')
           if($scope.tooltipScope)
             $scope.tooltipScope.$destroy();
           angular.element(arrowBoxContainer).remove();
+          angular.element($window).off('resize', positionTooltip);
         });
       }
     };
