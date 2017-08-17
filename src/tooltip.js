@@ -17,6 +17,8 @@
  *        ts-tooltip-close-callback="someFunction"              // Event Handler when closed is clicked
  *        ts-tooltip-track="someClass"                          // Tracks height and update if changed
  *        ts-tooltip-margin="Integer"                           // Integer value to provide margin between tooltip and element
+ *        ts-tooltip-button="Text"                              // Text for a button
+ *        ts-tooltip-button-clicked-callback="someFunction"     // Event Handler when button is clicked
  *        >
  *   Bottom Click Me
  * </button>
@@ -42,7 +44,9 @@ angular.module('ts.utils')
         tsTooltipShowClose: '@',
         tsTooltipCloseCallback: '&',
         tsTooltipTrack: '@',
-        tsTooltipMargin: '@'
+        tsTooltipMargin: '@',
+        tsTooltipButton: '@',
+        tsTooltipButtonClickedCallback: '&',
       },
       controller: function($scope){
         $scope.tsTooltipMargin = $scope.tsTooltipMargin ? $scope.tsTooltipMargin : 0;
@@ -230,7 +234,7 @@ angular.module('ts.utils')
 
           $scope.$watch('tsTooltipShow',function(newVal, oldVal) {
             if(newVal) {
-              // 250ms is an estimate to wait for the render of elements using ng-ifs 
+              // 250ms is an estimate to wait for the render of elements using ng-ifs
               $timeout(() => makeVisible(), 250);
             }
             else {
@@ -238,6 +242,14 @@ angular.module('ts.utils')
             }
           })
         }
+
+        $scope.onButtonClick = () => {
+          if ($scope.tsTooltipButtonClickedCallback) {
+            $scope.tsTooltipButtonClickedCallback();
+            removeTooltip();
+            if ($scope.tsTooltipCloseCallback) $scope.tsTooltipCloseCallback({id: $scope.tsTooltipId});
+          }
+        };
 
         //Clean up the tooltip and destroy the scope for the transcluded element
         $scope.$on('$destroy',function() {

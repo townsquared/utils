@@ -34,6 +34,11 @@ module.run(['$templateCache', function($templateCache) {
     '        <a href="#" ng-click="close()"><small><i class="icon-close icon" aria-hidden="true"></i></small></a>\n' +
     '      </div>\n' +
     '      {{tsTooltip}}\n' +
+    '      <div ng-show="tsTooltipButton" class="flex-horz medium-padding-top">\n' +
+    '        <button ng-click="onButtonClick()" type="button" class="btn no-margin primary short">\n' +
+    '          <strong><span>{{tsTooltipButton}}</span></strong>\n' +
+    '        </button>\n' +
+    '      </div>\n' +
     '    </div>\n' +
     '  </div>\n' +
     '</div>');

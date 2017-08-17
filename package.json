@@ -1,6 +1,6 @@
 {
   "name": "angular-ts-utils",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Angular Utilities for Townsqd.com",
   "main": "utils.min.js",
   "scripts": {

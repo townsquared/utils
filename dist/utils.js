@@ -85,6 +85,8 @@ angular.module('ts.utils').filter('tsTruncate', function () {
  *        ts-tooltip-close-callback="someFunction"              // Event Handler when closed is clicked
  *        ts-tooltip-track="someClass"                          // Tracks height and update if changed
  *        ts-tooltip-margin="Integer"                           // Integer value to provide margin between tooltip and element
+ *        ts-tooltip-button="Text"                              // Text for a button
+ *        ts-tooltip-button-clicked-callback="someFunction"     // Event Handler when button is clicked
  *        >
  *   Bottom Click Me
  * </button>
@@ -108,7 +110,9 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
       tsTooltipShowClose: '@',
       tsTooltipCloseCallback: '&',
       tsTooltipTrack: '@',
-      tsTooltipMargin: '@'
+      tsTooltipMargin: '@',
+      tsTooltipButton: '@',
+      tsTooltipButtonClickedCallback: '&'
     },
     controller: function controller($scope) {
       $scope.tsTooltipMargin = $scope.tsTooltipMargin ? $scope.tsTooltipMargin : 0;
@@ -304,6 +308,14 @@ angular.module('ts.utils').directive('tsTooltip', function ($templateCache, $tim
         });
       }
 
+      $scope.onButtonClick = function () {
+        if ($scope.tsTooltipButtonClickedCallback) {
+          $scope.tsTooltipButtonClickedCallback();
+          removeTooltip();
+          if ($scope.tsTooltipCloseCallback) $scope.tsTooltipCloseCallback({ id: $scope.tsTooltipId });
+        }
+      };
+
       //Clean up the tooltip and destroy the scope for the transcluded element
       $scope.$on('$destroy', function () {
         if ($scope.tooltipScope) $scope.tooltipScope.$destroy();
@@ -464,18 +476,6 @@ angular.module('ts.utils').directive('focusOn', function ($window, focusOnConfig
     return focusConfig;
   };
 });
-'use strict';
-
-(function (module) {
-  try {
-    module = angular.module('ts.utils');
-  } catch (e) {
-    module = angular.module('ts.utils', []);
-  }
-  module.run(['$templateCache', function ($templateCache) {
-    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main" ng-class="{\'ts-tooltip-close\': tsTooltipShowClose}">\n' + '      <div class="close" ng-show="tsTooltipShowClose">\n' + '  	    <a href="#" ng-click="close()"><small><i class="icon-close icon" aria-hidden="true"></i></small></a>\n' + '  	  </div>\n' + '      {{tsTooltip}}\n' + '    </div>\n' + '  </div>\n' + '</div>\n' + '');
-  }]);
-})();
 /**
  * ts-dropwdown - Shows a drop down list of items that can be selected from.
  *
@@ -740,6 +740,18 @@ angular.module('ts.utils').directive('tsDropDown', function ($templateCache, $co
     }
   };
 });
+'use strict';
+
+(function (module) {
+  try {
+    module = angular.module('ts.utils');
+  } catch (e) {
+    module = angular.module('ts.utils', []);
+  }
+  module.run(['$templateCache', function ($templateCache) {
+    $templateCache.put('templates/tsTooltip.html', '<div class="ts-tooltip-container {{::tsTooltipClass}}">\n' + '  <div class="arrow-box-container">\n' + '    <div id="tooltipMain" class="ts-tooltip-main" ng-class="{\'ts-tooltip-close\': tsTooltipShowClose}">\n' + '      <div class="close" ng-show="tsTooltipShowClose">\n' + '        <a href="#" ng-click="close()"><small><i class="icon-close icon" aria-hidden="true"></i></small></a>\n' + '      </div>\n' + '      {{tsTooltip}}\n' + '      <div ng-show="tsTooltipButton" class="flex-horz medium-padding-top">\n' + '        <button ng-click="onButtonClick()" type="button" class="btn no-margin primary short">\n' + '          <strong><span>{{tsTooltipButton}}</span></strong>\n' + '        </button>\n' + '      </div>\n' + '    </div>\n' + '  </div>\n' + '</div>\n' + '');
+  }]);
+})();
 /**
  * autoGrow - Increases height of textarea while typing
  *
