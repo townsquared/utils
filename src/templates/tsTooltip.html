@@ -2,9 +2,14 @@
   <div class="arrow-box-container">
     <div id="tooltipMain" class="ts-tooltip-main" ng-class="{'ts-tooltip-close': tsTooltipShowClose}">
       <div class="close" ng-show="tsTooltipShowClose">
-  	    <a href="#" ng-click="close()"><small><i class="icon-close icon" aria-hidden="true"></i></small></a>
-  	  </div>
+        <a href="#" ng-click="close()"><small><i class="icon-close icon" aria-hidden="true"></i></small></a>
+      </div>
       {{tsTooltip}}
+      <div ng-show="tsTooltipButton" class="flex-horz medium-padding-top">
+        <button ng-click="onButtonClick()" type="button" class="btn no-margin primary short">
+          <strong><span>{{tsTooltipButton}}</span></strong>
+        </button>
+      </div>
     </div>
   </div>
 </div>
